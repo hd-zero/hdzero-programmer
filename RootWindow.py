@@ -1,11 +1,13 @@
 import os
 import tkinter as tk
 # from tkinter import ttk
+version = "0.1"
+
 
 root = tk.Tk()
 
 def CreateRootWindow():
-    titleString = "HDZero Programmer"
+    titleString = "HDZero Programmer"+" V"+version
     iconPath = 'Data/HDZero_16.ico'
     windowX = 640
     windowY = 480
