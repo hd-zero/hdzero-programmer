@@ -1,10 +1,9 @@
 import os
 import tkinter as tk
-# from tkinter import ttk
+
 version = "0.1"
-
-
 root = tk.Tk()
+
 
 def CreateRootWindow():
     titleString = "HDZero Programmer"+" V"+version
@@ -19,9 +18,10 @@ def CreateRootWindow():
     if os.path.exists(iconPath):
         root.iconbitmap(iconPath)
 
+
 def RootWindow():
     CreateRootWindow()
 
+
 def RootThreadProc():
     RootWindow()
-    root.mainloop()
