@@ -54,7 +54,7 @@ def ParseTargetList():
     # parse targetTypeNum
     line = f.readline()
     targetTypeNum = int(line)
-    print('DBG:targetTypeNum:%d' % targetTypeNum)
+    print('\r\nDBG:targetTypeNum:%d' % targetTypeNum)
 
     # parse targetType
     targetType = f.read().splitlines()
@@ -81,7 +81,7 @@ def DownloadTargetPicture():
             print('\r\nDBG:Download Failed. Please check if the network is connected.')
             return
     print()
-    print('DBG:', 'Download Target Picture done\r\n')
+    print('DBG:', 'Download Target Picture done.\r\n')
 
 
 def LoadGithubFirmware():
