@@ -1,4 +1,4 @@
-from msilib.schema import Font
+#from msilib.schema import Font
 import os
 import tkinter as tk
 from tkinter import HORIZONTAL, VERTICAL, ttk
