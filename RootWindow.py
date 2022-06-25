@@ -43,28 +43,42 @@ def CreateLoadButton():
     LoadGithubButton = ttk.Button(root, text=buttonLoadGithubString,
                                   command=LoadGithubButtonCommand)
     LoadGithubButton.anchor = 'NW'
-    LoadGithubButton.place(x=310, y=360)
+    LoadGithubButton.place(x=310, y=370)
 
     buttonLoadLocalString = "Load Firmware[Local]"
     reloadButton = ttk.Button(root, text=buttonLoadLocalString,
                               command=LoadGithubButtonCommand)
     reloadButton.anchor = 'NW'
-    reloadButton.place(x=460, y=360)
+    reloadButton.place(x=460, y=370)
 
 def CreateFlashButton():
     buttonFlashString = "Flash"
     FlashButton = ttk.Button(root, text=buttonFlashString,
                                   command=LoadGithubButtonCommand)
     FlashButton.anchor = 'NW'
-    FlashButton.place(x=610, y=360)
+    FlashButton.place(x=610, y=370)
+
+def CreateDetectButton():
+    buttonDetectString = "Detect"
+    DetectButton = ttk.Button(root, text=buttonDetectString,
+                                  command=LoadGithubButtonCommand)
+    DetectButton.anchor = 'NW'
+    DetectButton.place(x=110, y=370)
+
+def CreateDefineTargetButton():
+    buttonDefineTargetString = "Define Target"
+    DefineTargetButton = ttk.Button(root, text=buttonDefineTargetString,
+                                  command=LoadGithubButtonCommand)
+    DefineTargetButton.anchor = 'NW'
+    DefineTargetButton.place(x=630, y=692)
 
 
 def CreateLabel():
-    vtxLabelString = "VTX Type"
+    vtxLabelString = "VTX Target"
     vtxLabel = tk.Label(root, text=vtxLabelString, bg="dimgray",
                         fg="white", font=("Consolas", 15, "bold"))
     vtxLabel.anchor = 'NW'
-    vtxLabel.place(x=95, y=10)
+    vtxLabel.place(x=90, y=10)
 
     firmwareLabelString = "Firmware"
     firmwareLabel = tk.Label(root, text=firmwareLabelString, bg="dimgray",
@@ -90,4 +104,6 @@ def RootThreadProc():
     CreateSeparator()
     CreateLabel()
     CreateLoadButton()
+    CreateDetectButton()
+    CreateDefineTargetButton()
     CreateFlashButton()
