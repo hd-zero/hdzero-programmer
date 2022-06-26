@@ -1,8 +1,9 @@
-#from msilib.schema import Font
+from PIL import Image, ImageTk
 import os
 import tkinter as tk
 from tkinter import HORIZONTAL, VERTICAL, ttk
 from Download import LoadGithubFirmwareRequest
+from target import targetDetect
 
 version = "0.1"
 
@@ -10,6 +11,10 @@ version = "0.1"
 class UI(tk.Tk):
     def __init__(self):
         super().__init__()
+
+        self.SelectedFirmwareString = ''
+        self.target = 0
+
         self.CreateRootWindow()
         self.CreateSeparator()
         self.CreateLabel()
@@ -17,6 +22,7 @@ class UI(tk.Tk):
         self.CreateDetectButton()
         self.CreateDefineTargetButton()
         self.CreateFlashButton()
+        self.UpdateTargetPicture()
 
     def CreateRootWindow(self):
         titleString = "HDZero Programmer"+" v"+version
@@ -45,6 +51,31 @@ class UI(tk.Tk):
     def LoadGithubButtonCommand(self):
         LoadGithubFirmwareRequest()
 
+    def DetectTargetButtonCommand(self):
+        # self.target = targetDetect()
+        self.UpdateTargetPicture()
+
+    def UpdateTargetPicture(self):
+        global photo
+
+        Witdh = 300
+        Height = 400
+
+        if self.target==1:
+            img_path = './Data/Github/Target_Info/HDZero_Freestyle/HDZero_Freestyle.png'
+        elif self.target==0:
+            img_path = './Data/Github/Target_Info/HDZero_Race_V1/HDZero_Race_V1.png'
+
+        img = Image.open(img_path)
+        photo = ImageTk.PhotoImage(img)
+        offsetX = (Witdh - photo.width()) / 2
+        offsetY = (Height - photo.height()) / 2
+        TargetPicture = tk.Label(self, image=photo)
+        TargetPicture.anchor = 'NW'
+        TargetPicture.place(x=offsetX,y=offsetY)
+
+        self.target = 1 - self.target
+
     def CreateLoadButton(self):
         buttonLoadGithubString = "Load Firmware[Github]"
         LoadGithubButton = ttk.Button(self, text=buttonLoadGithubString,
@@ -68,7 +99,7 @@ class UI(tk.Tk):
     def CreateDetectButton(self):
         buttonDetectString = "Detect"
         DetectButton = ttk.Button(self, text=buttonDetectString,
-                                  command=self.LoadGithubButtonCommand)
+                                  command=self.DetectTargetButtonCommand)
         DetectButton.anchor = 'NW'
         DetectButton.place(x=110, y=370)
 
@@ -103,6 +134,17 @@ class UI(tk.Tk):
                                fg="white", font=("Consolas", 10, "bold"))
         statusLabel.anchor = 'NW'
         statusLabel.place(x=5, y=695)
+
+        SelectedString = 'Selected'
+        SelectedLabel = tk.Label(self, text=SelectedString, bg="dimgray",
+                                 fg="white", font=("Consolas", 10, "bold"))
+        SelectedLabel.anchor = 'NW'
+        SelectedLabel.place(x=320, y=340)
+
+        SelectedFirmwareLabel = tk.Label(
+            self, text=self.SelectedFirmwareString)
+        SelectedFirmwareLabel.anchor = 'NW'
+        SelectedFirmwareLabel.place(x=390, y=342)
 
 
 def UI_mainloop():

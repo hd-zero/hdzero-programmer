@@ -69,7 +69,7 @@ def DownloadTargetPicture():
         webTargetPicturePath = WebRootPath + 'Target_Info/' + t + '/' + t + '.png'
         localTargetPicturePath = LocalRootPath + 'Target_Info/' + t + '/' + t + '.png'
         try:
-            print('\nDBG:', 'Downloading '+t+' picture from Github.com')
+            print('\nDBG:', 'Downloading '+t+'.png...')
             fname = wget.download(url=webTargetPicturePath, out=LocaLTempPath)
             if not os.path.exists(LocalRootPath + 'Target_Info/' + t + '/'):
                 os.makedirs(LocalRootPath + 'Target_Info/' + t + '/')
