@@ -1,19 +1,16 @@
 import threading
-from RootWindow import RootThreadProc
-from RootWindow import root
+from RootWindow import UI_mainloop
 from Download import DownloadThreadProc
 
 
 def main():
-    RootWindowThread = threading.Thread(
-        target=RootThreadProc, name='root_window')
-    RootWindowThread.start()
-
-    DownloadFileThread = threading.Thread(
+    DownloadFile_Thread = threading.Thread(
         target=DownloadThreadProc, name='download_file')
-    DownloadFileThread.start()
+    DownloadFile_Thread.start()
 
-    root.mainloop()
+    UI_Thread = threading.Thread(
+        target=UI_mainloop, name='UI_mainloop')
+    UI_Thread.start()
 
 
 if __name__ == '__main__':
