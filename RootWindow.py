@@ -74,11 +74,11 @@ def CreateDefineTargetButton():
 
 
 def CreateLabel():
-    vtxLabelString = "VTX Target"
-    vtxLabel = tk.Label(root, text=vtxLabelString, bg="dimgray",
+    targetLabelString = "Target"
+    targetLabel = tk.Label(root, text=targetLabelString, bg="dimgray",
                         fg="white", font=("Consolas", 15, "bold"))
-    vtxLabel.anchor = 'NW'
-    vtxLabel.place(x=90, y=10)
+    targetLabel.anchor = 'NW'
+    targetLabel.place(x=110, y=10)
 
     firmwareLabelString = "Firmware"
     firmwareLabel = tk.Label(root, text=firmwareLabelString, bg="dimgray",
