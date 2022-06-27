@@ -1,9 +1,9 @@
 from PIL import Image, ImageTk
 import os
 import tkinter as tk
-from tkinter import HORIZONTAL, VERTICAL, ttk
-from Download import LoadGithubFirmwareRequest
-from target import targetDetect
+from tkinter import HORIZONTAL, VERTICAL, ttk, StringVar
+import Download
+# from target import targetDetect
 
 version = "0.1"
 
@@ -14,6 +14,9 @@ class UI(tk.Tk):
 
         self.SelectedFirmwareString = ''
         self.target = 0
+        self.targetNameString = tk.StringVar()
+
+        Download.DetectLocalPath()
 
         self.CreateRootWindow()
         self.CreateSeparator()
@@ -22,7 +25,8 @@ class UI(tk.Tk):
         self.CreateDetectButton()
         self.CreateDefineTargetButton()
         self.CreateFlashButton()
-        self.UpdateTargetPicture()
+        self.CreateTargetPicture()
+        #self.CreateTargetNameLabel()
 
     def CreateRootWindow(self):
         titleString = "HDZero Programmer"+" v"+version
@@ -49,32 +53,68 @@ class UI(tk.Tk):
         sep_ver1.place(width=1, height=400, x=300, y=0)
 
     def LoadGithubButtonCommand(self):
-        LoadGithubFirmwareRequest()
+        Download.LoadGithubFirmwareRequest()
 
     def DetectTargetButtonCommand(self):
         # self.target = targetDetect()
-        self.UpdateTargetPicture()
 
-    def UpdateTargetPicture(self):
+        self.target = self.target + 1
+        if self.target > Download.targetTypeNum:
+            self.target = 0
+
+        self.CreateTargetPicture()
+        #self.CreateTargetNameLabel()
+
+    def CreateTargetPicture(self):
         global photo
 
         Witdh = 300
         Height = 400
 
-        if self.target==1:
-            img_path = './Data/Github/Target_Info/HDZero_Freestyle/HDZero_Freestyle.png'
-        elif self.target==0:
-            img_path = './Data/Github/Target_Info/HDZero_Race_V1/HDZero_Race_V1.png'
+        try:
+            if self.targetPicture != None:
+                self.targetPicture.destroy()
+        except:
+            a = 1
 
-        img = Image.open(img_path)
-        photo = ImageTk.PhotoImage(img)
-        offsetX = (Witdh - photo.width()) / 2
-        offsetY = (Height - photo.height()) / 2
-        TargetPicture = tk.Label(self, image=photo)
-        TargetPicture.anchor = 'NW'
-        TargetPicture.place(x=offsetX,y=offsetY)
+        if self.target == 0:
+            img_path = './Data/Github/HDZero.png'
+        else:
+            img_path = './Data/Github/Target_Info/' + \
+                Download.targetTypeList[self.target-1] + '/' + \
+                Download.targetTypeList[self.target-1] + '.png'
 
-        self.target = 1 - self.target
+        try:
+            img = Image.open(img_path)
+            photo = ImageTk.PhotoImage(img)
+            offsetX = (Witdh - photo.width()) / 2
+            offsetY = (Height - photo.height()) / 2
+            self.targetPicture = tk.Label(self, image=photo)
+            self.targetPicture.anchor = 'NW'
+            self.targetPicture.place(x=offsetX, y=offsetY)
+        except:
+            print("DBG:Can't find img_path")
+
+    #def CreateTargetNameLabel(self):
+    #    try:
+    #        if self.targetLabel != None:
+    #            self.targetLabel.destroy()
+    #    except:
+    #        a = 1
+    #    self.UpdateTargetNameString()
+    #    self.targetLabel = tk.Label(self, text=self.targetNameString.get())
+    #    self.targetLabel.anchor = 'NW'
+    #    self.targetLabel.place(x=80, y=340)
+
+    def UpdateTargetNameString(self):
+        if self.target == 0:
+            self.targetNameString.set('disconnected')
+        elif self.target == 255:
+            self.targetNameString.set('unknow')
+        elif self.target > Download.targetTypeNum:
+            self.targetNameString.set('unknow')
+        else:
+            self.targetNameString.set(Download.targetTypeList[self.target-1])
 
     def CreateLoadButton(self):
         buttonLoadGithubString = "Load Firmware[Github]"

@@ -8,13 +8,15 @@ LocaLFirmwarePath = LocalRootPath+'firmware/'
 LocalTargetInfoPath = LocalRootPath+'Target_Info/'
 LocaLTempPath = './Data/Temp/'
 LocalTargetListString = LocalRootPath + 'TargetList'
+LocalHDZeroString = LocalRootPath + 'HDZero.png'
 
 WebRootPath = 'https://raw.githubusercontent.com/ligenxxxx/HDZeroFirmware/main/'
 WebTargetListString = WebRootPath + 'TargetList'
+WebHDZeroString = WebRootPath + 'HDZero.png'
 
 downloadCommand = 0
 targetTypeNum = 0
-targetType = []
+targetTypeList = []
 
 
 def DetectLocalPath():
@@ -35,7 +37,7 @@ def DetectLocalPath():
 
 
 def DownloadTargetList():
-    print('\r\nDBG:Downloading TargetList from Github.com.')
+    print('\r\nDBG:Downloading TargetList...')
     try:
         wget.download(url=WebTargetListString, out=LocaLTempPath)
         if os.path.exists(LocalTargetListString):
@@ -45,10 +47,22 @@ def DownloadTargetList():
     except:
         print('\r\nDBG:Download Failed. Please check if the network is connected.')
 
+    print('\r\nDBG:Downloading HDZero.png...')
+    try:
+        wget.download(url=WebHDZeroString, out=LocaLTempPath)
+        if os.path.exists(LocalHDZeroString):
+            os.remove(LocalHDZeroString)
+        shutil.move(LocaLTempPath+'HDZero.png', LocalHDZeroString)
+
+    except:
+        print('\r\nDBG:Download Failed. Please check if the network is connected.')
+
+    
+
 
 def ParseTargetList():
     global targetTypeNum
-    global targetType
+    global targetTypeList
     f = open(LocalTargetListString, "r")
 
     # parse targetTypeNum
@@ -56,16 +70,16 @@ def ParseTargetList():
     targetTypeNum = int(line)
     print('\r\nDBG:targetTypeNum:%d' % targetTypeNum)
 
-    # parse targetType
-    targetType = f.read().splitlines()
-    print('DBG:', targetType)
+    # parse targetTypeList
+    targetTypeList = f.read().splitlines()
+    print('DBG:', targetTypeList)
 
     f.close()
 
 
 def DownloadTargetPicture():
-    print('DBG:', 'Downloading Target Picture from Github.com')
-    for t in targetType:
+    print('DBG:', 'Downloading Target Picture...')
+    for t in targetTypeList:
         webTargetPicturePath = WebRootPath + 'Target_Info/' + t + '/' + t + '.png'
         localTargetPicturePath = LocalRootPath + 'Target_Info/' + t + '/' + t + '.png'
         try:
@@ -97,9 +111,9 @@ def LoadGithubFirmwareRequest():
 
 def DownloadThreadProc():
     global downloadCommand
-    DetectLocalPath()
     while True:
         if downloadCommand == 1:
+            DetectLocalPath()
             LoadGithubFirmware()
             downloadCommand = 0
         time.sleep(0.1)
