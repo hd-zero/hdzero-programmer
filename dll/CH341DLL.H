@@ -1,15 +1,15 @@
-// 2004.05.28, 2004.10.20, 2005.01.08, 2005.03.25, 2005.04.28, 2005.07.18, 2005.07.28, 2005.09.19
+// 2004.05.28, 2004.10.20, 2005.01.08, 2005.03.25, 2005.04.28, 2005.07.18, 2005.07.28, 2005.09.19, 2007.12.19, 2008.10.15
 //****************************************
-//**  Copyright  (C)  W.ch  1999-2005   **
+//**  Copyright  (C)  W.ch  1999-2008   **
 //**  Web:  http://www.winchiphead.com  **
 //****************************************
 //**  DLL for USB interface chip CH341  **
 //**  C, VC5.0                          **
 //****************************************
 //
-// USB×ÜÏß½Ó¿ÚÐ¾Æ¬CH341²¢¿ÚÓ¦ÓÃ²ã½Ó¿Ú¿â V1.9
-// ÄÏ¾©Çßºãµç×ÓÓÐÏÞ¹«Ë¾  ×÷Õß: W.ch 2005.09
-// CH341-DLL  V1.9
+// USB×ÜÏß½Ó¿ÚÐ¾Æ¬CH341²¢¿ÚÓ¦ÓÃ²ã½Ó¿Ú¿â V2.1
+// ÄÏ¾©Çßºãµç×ÓÓÐÏÞ¹«Ë¾  ×÷Õß: W.ch 2008.10
+// CH341-DLL  V2.1
 // ÔËÐÐ»·¾³: Windows 98/ME, Windows 2000/XP
 // support USB chip: CH341, CH341A
 // USB => Parallel, I2C, SPI, JTAG ...
@@ -152,20 +152,23 @@ typedef	struct	_WIN32_COMMAND {				// ¶¨ÒåWIN32ÃüÁî½Ó¿Ú½á¹¹
 #define		mCH341_I2C_COMMAND		0x53		// ·¢³öI2C½Ó¿ÚµÄÃüÁî
 
 // CH341²¢¿Ú²Ù×÷ÃüÁî´úÂë
-#define		mCH341_PARA_CMD_R0		0xAC		// ´Ó²¢¿Ú¶ÁÊý¾Ý0
-#define		mCH341_PARA_CMD_R1		0xAD		// ´Ó²¢¿Ú¶ÁÊý¾Ý1
-#define		mCH341_PARA_CMD_W0		0xA6		// Ïò²¢¿ÚÐ´Êý¾Ý0
-#define		mCH341_PARA_CMD_W1		0xA7		// Ïò²¢¿ÚÐ´Êý¾Ý1
+#define		mCH341_PARA_CMD_R0		0xAC		// ´Ó²¢¿Ú¶ÁÊý¾Ý0,´Î×Ö½ÚÎª³¤¶È
+#define		mCH341_PARA_CMD_R1		0xAD		// ´Ó²¢¿Ú¶ÁÊý¾Ý1,´Î×Ö½ÚÎª³¤¶È
+#define		mCH341_PARA_CMD_W0		0xA6		// Ïò²¢¿ÚÐ´Êý¾Ý0,´Ó´Î×Ö½Ú¿ªÊ¼ÎªÊý¾ÝÁ÷
+#define		mCH341_PARA_CMD_W1		0xA7		// Ïò²¢¿ÚÐ´Êý¾Ý1,´Ó´Î×Ö½Ú¿ªÊ¼ÎªÊý¾ÝÁ÷
 #define		mCH341_PARA_CMD_STS		0xA0		// »ñÈ¡²¢¿Ú×´Ì¬
 
 // CH341A²¢¿Ú²Ù×÷ÃüÁî´úÂë
 #define		mCH341A_CMD_SET_OUTPUT	0xA1		// ÉèÖÃ²¢¿ÚÊä³ö
 #define		mCH341A_CMD_IO_ADDR		0xA2		// MEM´øµØÖ·¶ÁÐ´/ÊäÈëÊä³ö,´Ó´Î×Ö½Ú¿ªÊ¼ÎªÃüÁîÁ÷
 #define		mCH341A_CMD_PRINT_OUT	0xA3		// PRINT¼æÈÝ´òÓ¡·½Ê½Êä³ö,´Ó´Î×Ö½Ú¿ªÊ¼ÎªÊý¾ÝÁ÷
+#define		mCH341A_CMD_PWM_OUT		0xA4		// PWMÊý¾ÝÊä³öµÄÃüÁî°ü,´Ó´Î×Ö½Ú¿ªÊ¼ÎªÊý¾ÝÁ÷
+#define		mCH341A_CMD_SHORT_PKT	0xA5		// ¶Ì°ü,´Î×Ö½ÚÊÇ¸ÃÃüÁî°üµÄÕæÕý³¤¶È,ÔÙ´Î×Ö½Ú¼°Ö®ºóµÄ×Ö½ÚÊÇÔ­ÃüÁî°ü
 #define		mCH341A_CMD_SPI_STREAM	0xA8		// SPI½Ó¿ÚµÄÃüÁî°ü,´Ó´Î×Ö½Ú¿ªÊ¼ÎªÊý¾ÝÁ÷
-#define		mCH341A_CMD_SIO_STREAM	0xA9		// SIO½Ó¿ÚµÄÃüÁî°ü,´Ó´Î×Ö½Ú¿ªÊ¼ÎªÊý¾ÝÁ÷
+//#define		mCH341A_CMD_SIO_STREAM	0xA9		// SIO½Ó¿ÚµÄÃüÁî°ü,´Ó´Î×Ö½Ú¿ªÊ¼ÎªÊý¾ÝÁ÷
 #define		mCH341A_CMD_I2C_STREAM	0xAA		// I2C½Ó¿ÚµÄÃüÁî°ü,´Ó´Î×Ö½Ú¿ªÊ¼ÎªI2CÃüÁîÁ÷
 #define		mCH341A_CMD_UIO_STREAM	0xAB		// UIO½Ó¿ÚµÄÃüÁî°ü,´Ó´Î×Ö½Ú¿ªÊ¼ÎªÃüÁîÁ÷
+#define		mCH341A_CMD_PIO_STREAM	0xAE		// PIO½Ó¿ÚµÄÃüÁî°ü,´Ó´Î×Ö½Ú¿ªÊ¼ÎªÊý¾ÝÁ÷
 
 // CH341A¿ØÖÆ´«ÊäµÄ³§ÉÌ×¨ÓÃÇëÇó´úÂë
 #define		mCH341A_BUF_CLEAR		0xB2		// Çå³ýÎ´Íê³ÉµÄÊý¾Ý
@@ -202,6 +205,7 @@ typedef	struct	_WIN32_COMMAND {				// ¶¨ÒåWIN32ÃüÁî½Ó¿Ú½á¹¹
 #define		mCH341_PARA_MODE_EPP17	0x00		// CH341A²¢¿Ú¹¤×÷Ä£Ê½ÎªEPP·½Ê½V1.7
 #define		mCH341_PARA_MODE_EPP19	0x01		// CH341A²¢¿Ú¹¤×÷Ä£Ê½ÎªEPP·½Ê½V1.9
 #define		mCH341_PARA_MODE_MEM	0x02		// CH341²¢¿Ú¹¤×÷Ä£Ê½ÎªMEM·½Ê½
+#define		mCH341_PARA_MODE_ECP	0x03		// CH341A²¢¿Ú¹¤×÷Ä£Ê½ÎªECP·½Ê½
 
 
 // I/O·½ÏòÉèÖÃÎ»¶¨Òå,Ö±½ÓÊäÈëµÄ×´Ì¬ÐÅºÅµÄÎ»¶¨Òå,Ö±½ÓÊä³öµÄÎ»Êý¾Ý¶¨Òå
@@ -214,6 +218,7 @@ typedef	struct	_WIN32_COMMAND {				// ¶¨ÒåWIN32ÃüÁî½Ó¿Ú½á¹¹
 #define		mStateBitADDRS			0x00008000	// Ö»Ð´¿É¶Á,ADDRS#/ADDR/ALEÒý½ÅÊäÈë×´Ì¬,1:¸ßµçÆ½,0:µÍµçÆ½
 #define		mStateBitRESET			0x00010000	// Ö»Ð´,RESET#Òý½ÅÊäÈë×´Ì¬,1:¸ßµçÆ½,0:µÍµçÆ½
 #define		mStateBitWRITE			0x00020000	// Ö»Ð´,WRITE#Òý½ÅÊäÈë×´Ì¬,1:¸ßµçÆ½,0:µÍµçÆ½
+#define		mStateBitSCL			0x00400000	// Ö»¶Á,SCLÒý½ÅÊäÈë×´Ì¬,1:¸ßµçÆ½,0:µÍµçÆ½
 #define		mStateBitSDA			0x00800000	// Ö»¶Á,SDAÒý½ÅÊäÈë×´Ì¬,1:¸ßµçÆ½,0:µÍµçÆ½
 
 
@@ -430,6 +435,8 @@ PVOID	WINAPI	CH341GetDeviceName(  // ·µ»ØÖ¸ÏòCH341Éè±¸Ãû³ÆµÄ»º³åÇø,³ö´íÔò·µ»ØNUL
 
 ULONG	WINAPI	CH341GetVerIC(  // »ñÈ¡CH341Ð¾Æ¬µÄ°æ±¾,·µ»Ø:0=Éè±¸ÎÞÐ§,0x10=CH341,0x20=CH341A
 	ULONG			iIndex );  // Ö¸¶¨CH341Éè±¸ÐòºÅ
+#define		IC_VER_CH341A		0x20
+#define		IC_VER_CH341A3		0x30
 
 
 BOOL	WINAPI	CH341FlushBuffer(  // Çå¿ÕCH341µÄ»º³åÇø
@@ -534,16 +541,15 @@ BOOL	WINAPI	CH341Set_D5_D0(  // ÉèÖÃCH341µÄD5-D0Òý½ÅµÄI/O·½Ïò,²¢Í¨¹ýCH341µÄD5-D0
 // ÒÔÉÏÊý¾ÝµÄÎ»5-Î»0·Ö±ð¶ÔÓ¦CH341µÄD5-D0Òý½Å
 
 
-BOOL	WINAPI	CH341StreamSPI3(  // ´¦ÀíSPIÊý¾ÝÁ÷,3Ïß½Ó¿Ú,Ê±ÖÓÏßÎªDCK2/SCLÒý½Å,Êý¾ÝÏßÎªDIO/SDAÒý½Å(×¼Ë«ÏòI/O),Æ¬Ñ¡ÏßÎªD0/D1/D2,ËÙ¶ÈÔ¼51K×Ö½Ú
-/* SPIÊ±Ðò: DCK2/SCLÒý½ÅÎªÊ±ÖÓÊä³ö, Ä¬ÈÏÎªµÍµçÆ½, DIO/SDAÒý½ÅÔÚÊ±ÖÓÉÏÉýÑØÖ®Ç°Êä³ö, DIO/SDAÒý½ÅÔÚÊ±ÖÓÏÂ½µÑØÖ®ºóÊäÈë */
-	ULONG			iIndex,  // Ö¸¶¨CH341Éè±¸ÐòºÅ
-	ULONG			iChipSelect,  // Æ¬Ñ¡¿ØÖÆ, Î»7Îª0ÔòºöÂÔÆ¬Ñ¡¿ØÖÆ, Î»7Îª1Ôò²ÎÊýÓÐÐ§: Î»1Î»0Îª00/01/10·Ö±ðÑ¡ÔñD0/D1/D2Òý½Å×÷ÎªµÍµçÆ½ÓÐÐ§Æ¬Ñ¡
-	ULONG			iLength,  // ×¼±¸´«ÊäµÄÊý¾Ý×Ö½ÚÊý
-	PVOID			ioBuffer );  // Ö¸ÏòÒ»¸ö»º³åÇø,·ÅÖÃ×¼±¸´ÓDIOÐ´³öµÄÊý¾Ý,·µ»ØºóÊÇ´ÓDIO¶ÁÈëµÄÊý¾Ý
+BOOL	WINAPI	CH341StreamSPI3(  // ¸ÃAPIÒÑÊ§Ð§,ÇëÎðÊ¹ÓÃ
+	ULONG			iIndex,
+	ULONG			iChipSelect,
+	ULONG			iLength,
+	PVOID			ioBuffer );
 
 
 BOOL	WINAPI	CH341StreamSPI4(  // ´¦ÀíSPIÊý¾ÝÁ÷,4Ïß½Ó¿Ú,Ê±ÖÓÏßÎªDCK/D3Òý½Å,Êä³öÊý¾ÝÏßÎªDOUT/D5Òý½Å,ÊäÈëÊý¾ÝÏßÎªDIN/D7Òý½Å,Æ¬Ñ¡ÏßÎªD0/D1/D2,ËÙ¶ÈÔ¼68K×Ö½Ú
-/* SPIÊ±Ðò: DCK/D3Òý½ÅÎªÊ±ÖÓÊä³ö, Ä¬ÈÏÎªµÍµçÆ½, DOUT/D5Òý½ÅÔÚÊ±ÖÓÉÏÉýÑØÖ®Ç°Êä³ö, DIN/D7Òý½ÅÔÚÊ±ÖÓÏÂ½µÑØÖ®ºóÊäÈë */
+/* SPIÊ±Ðò: DCK/D3Òý½ÅÎªÊ±ÖÓÊä³ö, Ä¬ÈÏÎªµÍµçÆ½, DOUT/D5Òý½ÅÔÚÊ±ÖÓÉÏÉýÑØÖ®Ç°µÄµÍµçÆ½ÆÚ¼äÊä³ö, DIN/D7Òý½ÅÔÚÊ±ÖÓÏÂ½µÑØÖ®Ç°µÄ¸ßµçÆ½ÆÚ¼äÊäÈë */
 	ULONG			iIndex,  // Ö¸¶¨CH341Éè±¸ÐòºÅ
 	ULONG			iChipSelect,  // Æ¬Ñ¡¿ØÖÆ, Î»7Îª0ÔòºöÂÔÆ¬Ñ¡¿ØÖÆ, Î»7Îª1Ôò²ÎÊýÓÐÐ§: Î»1Î»0Îª00/01/10·Ö±ðÑ¡ÔñD0/D1/D2Òý½Å×÷ÎªµÍµçÆ½ÓÐÐ§Æ¬Ñ¡
 	ULONG			iLength,  // ×¼±¸´«ÊäµÄÊý¾Ý×Ö½ÚÊý
@@ -551,7 +557,7 @@ BOOL	WINAPI	CH341StreamSPI4(  // ´¦ÀíSPIÊý¾ÝÁ÷,4Ïß½Ó¿Ú,Ê±ÖÓÏßÎªDCK/D3Òý½Å,Êä³öÊý
 
 
 BOOL	WINAPI	CH341StreamSPI5(  // ´¦ÀíSPIÊý¾ÝÁ÷,5Ïß½Ó¿Ú,Ê±ÖÓÏßÎªDCK/D3Òý½Å,Êä³öÊý¾ÝÏßÎªDOUT/D5ºÍDOUT2/D4Òý½Å,ÊäÈëÊý¾ÝÏßÎªDIN/D7ºÍDIN2/D6Òý½Å,Æ¬Ñ¡ÏßÎªD0/D1/D2,ËÙ¶ÈÔ¼30K×Ö½Ú*2
-/* SPIÊ±Ðò: DCK/D3Òý½ÅÎªÊ±ÖÓÊä³ö, Ä¬ÈÏÎªµÍµçÆ½, DOUT/D5ºÍDOUT2/D4Òý½ÅÔÚÊ±ÖÓÉÏÉýÑØÖ®Ç°Êä³ö, DIN/D7ºÍDIN2/D6Òý½ÅÔÚÊ±ÖÓÏÂ½µÑØÖ®ºóÊäÈë */
+/* SPIÊ±Ðò: DCK/D3Òý½ÅÎªÊ±ÖÓÊä³ö, Ä¬ÈÏÎªµÍµçÆ½, DOUT/D5ºÍDOUT2/D4Òý½ÅÔÚÊ±ÖÓÉÏÉýÑØÖ®Ç°µÄµÍµçÆ½ÆÚ¼äÊä³ö, DIN/D7ºÍDIN2/D6Òý½ÅÔÚÊ±ÖÓÏÂ½µÑØÖ®Ç°µÄ¸ßµçÆ½ÆÚ¼äÊäÈë */
 	ULONG			iIndex,  // Ö¸¶¨CH341Éè±¸ÐòºÅ
 	ULONG			iChipSelect,  // Æ¬Ñ¡¿ØÖÆ, Î»7Îª0ÔòºöÂÔÆ¬Ñ¡¿ØÖÆ, Î»7Îª1Ôò²ÎÊýÓÐÐ§: Î»1Î»0Îª00/01/10·Ö±ðÑ¡ÔñD0/D1/D2Òý½Å×÷ÎªµÍµçÆ½ÓÐÐ§Æ¬Ñ¡
 	ULONG			iLength,  // ×¼±¸´«ÊäµÄÊý¾Ý×Ö½ÚÊý
@@ -563,7 +569,7 @@ BOOL	WINAPI	CH341BitStreamSPI(  // ´¦ÀíSPIÎ»Êý¾ÝÁ÷,4Ïß/5Ïß½Ó¿Ú,Ê±ÖÓÏßÎªDCK/D3Òý½
 	ULONG			iIndex,  // Ö¸¶¨CH341Éè±¸ÐòºÅ
 	ULONG			iLength,  // ×¼±¸´«ÊäµÄÊý¾ÝÎ»Êý,Ò»´Î×î¶à896,½¨Òé²»³¬¹ý256
 	PVOID			ioBuffer );  // Ö¸ÏòÒ»¸ö»º³åÇø,·ÅÖÃ×¼±¸´ÓDOUT/DOUT2/D2-D0Ð´³öµÄÊý¾Ý,·µ»ØºóÊÇ´ÓDIN/DIN2¶ÁÈëµÄÊý¾Ý
-/* SPIÊ±Ðò: DCK/D3Òý½ÅÎªÊ±ÖÓÊä³ö, Ä¬ÈÏÎªµÍµçÆ½, DOUT/D5ºÍDOUT2/D4Òý½ÅÔÚÊ±ÖÓÉÏÉýÑØÖ®Ç°Êä³ö, DIN/D7ºÍDIN2/D6Òý½ÅÔÚÊ±ÖÓÏÂ½µÑØÖ®ºóÊäÈë */
+/* SPIÊ±Ðò: DCK/D3Òý½ÅÎªÊ±ÖÓÊä³ö, Ä¬ÈÏÎªµÍµçÆ½, DOUT/D5ºÍDOUT2/D4Òý½ÅÔÚÊ±ÖÓÉÏÉýÑØÖ®Ç°µÄµÍµçÆ½ÆÚ¼äÊä³ö, DIN/D7ºÍDIN2/D6Òý½ÅÔÚÊ±ÖÓÏÂ½µÑØÖ®Ç°µÄ¸ßµçÆ½ÆÚ¼äÊäÈë */
 /* ioBufferÖÐµÄÒ»¸ö×Ö½Ú¹²8Î»·Ö±ð¶ÔÓ¦D7-D0Òý½Å, Î»5Êä³öµ½DOUT, Î»4Êä³öµ½DOUT2, Î»2-Î»0Êä³öµ½D2-D0, Î»7´ÓDINÊäÈë, Î»6´ÓDIN2ÊäÈë, Î»3Êý¾ÝºöÂÔ */
 /* ÔÚµ÷ÓÃ¸ÃAPIÖ®Ç°,Ó¦¸ÃÏÈµ÷ÓÃCH341Set_D5_D0ÉèÖÃCH341µÄD5-D0Òý½ÅµÄI/O·½Ïò,²¢ÉèÖÃÒý½ÅµÄÄ¬ÈÏµçÆ½ */
 
@@ -619,7 +625,6 @@ BOOL	WINAPI	CH341SetupSerial(  // Éè¶¨CH341µÄ´®¿ÚÌØÐÔ,¸ÃAPIÖ»ÄÜÓÃÓÚ¹¤×÷ÓÚ´®¿Ú·½Ê
 	ULONG					iParityMode,  // Ö¸¶¨CH341´®¿ÚµÄÊý¾ÝÐ£ÑéÄ£Ê½: NOPARITY/ODDPARITY/EVENPARITY/MARKPARITY/SPACEPARITY
 	ULONG					iBaudRate );  // Ö¸¶¨CH341´®¿ÚµÄÍ¨Ñ¶²¨ÌØÂÊÖµ,¿ÉÒÔÊÇ50ÖÁ3000000Ö®¼äµÄÈÎÒâÖµ
 
-
 /*  ÒÔÏÂAPI¿ÉÒÔÓÃÓÚ¹¤×÷ÓÚ´®¿Ú·½Ê½µÄCH341Ð¾Æ¬,³ý´ËÖ®ÍâµÄAPIÒ»°ãÖ»ÄÜÓÃÓÚ²¢¿Ú·½Ê½µÄCH341Ð¾Æ¬
 	CH341OpenDevice
 	CH341CloseDevice
@@ -656,6 +661,19 @@ BOOL	WINAPI	CH341SetupSerial(  // Éè¶¨CH341µÄ´®¿ÚÌØÐÔ,¸ÃAPIÖ»ÄÜÓÃÓÚ¹¤×÷ÓÚ´®¿Ú·½Ê
 	CH341ResetRead
 	CH341ResetWrite
 */
+HANDLE	WINAPI	CH341OpenDeviceEx(   // ´ò¿ªCH341Éè±¸,·µ»Ø¾ä±ú,³ö´íÔòÎÞÐ§
+    ULONG			iIndex );        // Ö¸¶¨CH341Éè±¸ÐòºÅ,0¶ÔÓ¦²åÈëµÄµÚÒ»¸öÉè±¸,1¶ÔÓ¦²åÈëµÄµÚ¶þ¸öÉè±¸,Îª½ÚÔ¼Éè±¸Éè±¸ÐòºÅ×ÊÔ´,ÓÃÍêºóÒª¹Ø±ÕÉè±¸
+
+VOID	WINAPI	CH341CloseDeviceEx(  // ¹Ø±ÕCH341Éè±¸
+	ULONG			iIndex );        // Ö¸¶¨CH341Éè±¸ÐòºÅ
+
+PCHAR	WINAPI	CH341GetDeviceNameEx(   // ·µ»ØÖ¸ÏòCH341Éè±¸Ãû³ÆµÄ»º³åÇø,³ö´íÔò·µ»ØNULL
+	ULONG			iIndex );           // Ö¸¶¨CH341Éè±¸ÐòºÅ,0¶ÔÓ¦µÚÒ»¸öÉè±¸
+
+BOOL	WINAPI	CH341SetDeviceNotifyEx(       // Éè¶¨Éè±¸ÊÂ¼þÍ¨Öª³ÌÐò
+	ULONG					iIndex,           // Ö¸¶¨CH341Éè±¸ÐòºÅ,0¶ÔÓ¦µÚÒ»¸öÉè±¸
+	PCHAR					iDeviceID,        // ¿ÉÑ¡²ÎÊý,Ö¸Ïò×Ö·û´®,Ö¸¶¨±»¼à¿ØµÄÉè±¸µÄID,×Ö·û´®ÒÔ\0ÖÕÖ¹
+	mPCH341_NOTIFY_ROUTINE	iNotifyRoutine ); // Ö¸¶¨Éè±¸ÊÂ¼þ»Øµ÷³ÌÐò,ÎªNULLÔòÈ¡ÏûÊÂ¼þÍ¨Öª,·ñÔòÔÚ¼ì²âµ½ÊÂ¼þÊ±µ÷ÓÃ¸Ã³ÌÐò
 
 
 #ifdef __cplusplus
