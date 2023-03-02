@@ -29,10 +29,10 @@ class UI(tk.Tk):
         #self.CreateTargetNameLabel()
 
     def CreateRootWindow(self):
-        titleString = "HDZero Programmer"+" v"+version
+        titleString = "HDZero Vtx Programmer"+" v"+version
         iconPath = 'Data/HDZero_16.ico'
-        windowX = 720
-        windowY = 720
+        windowX = 800
+        windowY = 600
         offsetX = (self.winfo_screenwidth() - windowX)/2
         offsetY = (self.winfo_screenheight() - windowY)/2
         self.geometry('%dx%d+%d+%d' % (windowX, windowY, offsetX, offsetY))
@@ -44,10 +44,10 @@ class UI(tk.Tk):
     def CreateSeparator(self):
         sep_hor1 = ttk.Separator(self, orient=HORIZONTAL)
         sep_hor1.anchor = 'NW'
-        sep_hor1.place(width=720, height=1, x=0, y=400)
+        sep_hor1.place(width=800, height=1, x=0, y=400)
         sep_hor2 = ttk.Separator(self, orient=HORIZONTAL)
         sep_hor2.anchor = 'NW'
-        sep_hor2.place(width=720, height=1, x=0, y=690)
+        sep_hor2.place(width=600, height=1, x=0, y=690)
         sep_ver1 = ttk.Separator(self, orient=VERTICAL)
         sep_ver1.anchor = 'NW'
         sep_ver1.place(width=1, height=400, x=300, y=0)

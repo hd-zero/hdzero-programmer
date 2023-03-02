@@ -18,7 +18,6 @@ downloadCommand = 0
 targetTypeNum = 0
 targetTypeList = []
 
-
 def DetectLocalPath():
     if not os.path.exists(LocalRootPath):
         os.makedirs(LocalRootPath)

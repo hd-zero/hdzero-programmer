@@ -1,8 +1,7 @@
 import threading
 from ui import UI_mainloop
 from Download import DownloadThreadProc
-from ch341 import ch341ThreadProc
-
+from ch341_wrapper import ch341ThreadProc
 
 def main():
     
