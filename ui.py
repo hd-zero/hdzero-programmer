@@ -3,10 +3,8 @@ import os
 import tkinter as tk
 from tkinter import HORIZONTAL, VERTICAL, ttk, StringVar
 import Download
-# from target import targetDetect
 
 version = "0.1"
-
 
 class UI(tk.Tk):
     def __init__(self):
@@ -16,30 +14,57 @@ class UI(tk.Tk):
         self.target = 0
         self.targetNameString = tk.StringVar()
 
-        Download.DetectLocalPath()
+        self.ver_combobox = None
+        self.target_combobox = None
+        self.auto_btn = None
 
-        self.CreateRootWindow()
-        self.CreateSeparator()
-        self.CreateLabel()
-        self.CreateLoadButton()
-        self.CreateDetectButton()
-        self.CreateDefineTargetButton()
-        self.CreateFlashButton()
-        self.CreateTargetPicture()
+        Download.LoadGithubFirmware()
+
+        self.create_root_window()
+        self.create_version_combobox()
+        self.create_target_combobox()
+        self.create_auto_detect_btn()
+
+        # self.CreateSeparator()
+        # self.CreateLabel()
+        # self.CreateLoadButton()
+        # self.CreateDetectButton()
+        # self.CreateDefineTargetButton()
+        # self.CreateFlashButton()
+        # self.CreateTargetPicture()
         #self.CreateTargetNameLabel()
 
-    def CreateRootWindow(self):
-        titleString = "HDZero Vtx Programmer"+" v"+version
+    def create_root_window(self):
+        titleString = "HDZero VTX Programmer"+" v"+version
         iconPath = 'Data/HDZero_16.ico'
-        windowX = 800
-        windowY = 600
+        windowX = 640
+        windowY = 320
         offsetX = (self.winfo_screenwidth() - windowX)/2
         offsetY = (self.winfo_screenheight() - windowY)/2
         self.geometry('%dx%d+%d+%d' % (windowX, windowY, offsetX, offsetY))
         self.resizable(False, False)
         self.title(titleString)
+        self.configure(bg="#303030")
         if os.path.exists(iconPath):
             self.iconbitmap(iconPath)
+
+    def create_version_combobox(self):
+        self.ver_combobox = ttk.Combobox(self,state = 'readonly')
+        self.ver_combobox.anchor = 'NW'
+        self.ver_combobox.place(width=200, height=24, x=20, y=20)
+
+    def create_target_combobox(self):
+        self.target_combobox = ttk.Combobox(self,state = 'readonly')
+        self.target_combobox.anchor = 'NW'
+        self.target_combobox.place(width=200, height=24, x=20, y=50)
+        self.target_combobox['value'] = Download.ParseTargetList()
+        self.target_combobox.current(0)
+
+    def create_auto_detect_btn(self):
+        self.auto_btn = ttk.Button(self, text='Auto detect')
+        self.auto_btn.anchor = 'NW'
+        self.auto_btn.place(width=80, height=24, x=240, y=50)
+
 
     def CreateSeparator(self):
         sep_hor1 = ttk.Separator(self, orient=HORIZONTAL)

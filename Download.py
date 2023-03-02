@@ -31,8 +31,8 @@ def DetectLocalPath():
         f = open(LocalTargetListString, "w")
         f.write("0")
         f.close()
-    else:
-        ParseTargetList()
+    # else:
+    #     ParseTargetList()
 
 
 def DownloadTargetList():
@@ -46,15 +46,15 @@ def DownloadTargetList():
     except:
         print('\r\nDBG:Download Failed. Please check if the network is connected.')
 
-    print('\r\nDBG:Downloading HDZero.png...')
-    try:
-        wget.download(url=WebHDZeroString, out=LocaLTempPath)
-        if os.path.exists(LocalHDZeroString):
-            os.remove(LocalHDZeroString)
-        shutil.move(LocaLTempPath+'HDZero.png', LocalHDZeroString)
+    # print('\r\nDBG:Downloading HDZero.png...')
+    # try:
+    #     wget.download(url=WebHDZeroString, out=LocaLTempPath)
+    #     if os.path.exists(LocalHDZeroString):
+    #         os.remove(LocalHDZeroString)
+    #     shutil.move(LocaLTempPath+'HDZero.png', LocalHDZeroString)
 
-    except:
-        print('\r\nDBG:Download Failed. Please check if the network is connected.')
+    # except:
+    #     print('\r\nDBG:Download Failed. Please check if the network is connected.')
 
     
 
@@ -62,6 +62,7 @@ def DownloadTargetList():
 def ParseTargetList():
     global targetTypeNum
     global targetTypeList
+    global UI
     f = open(LocalTargetListString, "r")
 
     # parse targetTypeNum
@@ -71,9 +72,11 @@ def ParseTargetList():
 
     # parse targetTypeList
     targetTypeList = f.read().splitlines()
+    targetTypeList.insert(0, "Choose a VTX")
     print('DBG:', targetTypeList)
-
     f.close()
+
+    return targetTypeList
 
 
 def DownloadTargetPicture():
@@ -98,9 +101,10 @@ def DownloadTargetPicture():
 
 
 def LoadGithubFirmware():
+    DetectLocalPath()
     DownloadTargetList()
-    ParseTargetList()
-    DownloadTargetPicture()
+    # ParseTargetList()
+    # DownloadTargetPicture()
 
 
 def LoadGithubFirmwareRequest():
@@ -111,8 +115,8 @@ def LoadGithubFirmwareRequest():
 def DownloadThreadProc():
     global downloadCommand
     while True:
-        if downloadCommand == 1:
-            DetectLocalPath()
-            LoadGithubFirmware()
-            downloadCommand = 0
+        #if downloadCommand == 1:
+        #    DetectLocalPath()
+        #    LoadGithubFirmware()
+        #    downloadCommand = 0
         time.sleep(0.1)
