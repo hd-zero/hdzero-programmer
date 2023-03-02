@@ -17,6 +17,5 @@ def main():
         target=UI_mainloop, name='UI_mainloop')
     UI_Thread.start()
 
-
 if __name__ == '__main__':
     main()
