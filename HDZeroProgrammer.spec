@@ -41,5 +41,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['HDZeroicon_1.ico'],
+    icon=['icon256.png'],
 )
