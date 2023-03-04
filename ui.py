@@ -3,6 +3,7 @@ import os
 import tkinter as tk
 from tkinter import HORIZONTAL, VERTICAL, ttk, StringVar
 import Download
+from ch341_wrapper import ch341
 
 version = "0.1"
 
@@ -64,7 +65,6 @@ class UI(tk.Tk):
         self.auto_btn = ttk.Button(self, text='Auto detect')
         self.auto_btn.anchor = 'NW'
         self.auto_btn.place(width=80, height=24, x=240, y=50)
-
 
     def CreateSeparator(self):
         sep_hor1 = ttk.Separator(self, orient=HORIZONTAL)

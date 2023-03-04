@@ -97,12 +97,12 @@ def flash_connect(ch341):
                     print("DBG: flash is disconnected")
                     ch341.flash_connected = 0
 
+ch341 = ch341_class()
 def ch341ThreadProc():
     print('start ch341ThreadProc')
-    ch341 = ch341_class()
 
     while True:
         ch341.dev_connect()
         flash_connect(ch341)
 
-        time.sleep(1)
+        time.sleep(0.1)
