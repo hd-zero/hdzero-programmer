@@ -62,7 +62,6 @@ def DownloadTargetList():
 def ParseTargetList():
     global targetTypeNum
     global targetTypeList
-    global UI
     f = open(LocalTargetListString, "r")
 
     # parse targetTypeNum

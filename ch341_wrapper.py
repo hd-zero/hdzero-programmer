@@ -104,5 +104,4 @@ def ch341ThreadProc():
     while True:
         ch341.dev_connect()
         flash_connect(ch341)
-
         time.sleep(0.1)

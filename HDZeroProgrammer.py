@@ -3,7 +3,6 @@ from ui import UI_mainloop
 from Download import DownloadThreadProc
 from ch341_wrapper import ch341ThreadProc
 
-
 def main():
 
     ch341_Thread = threading.Thread(
