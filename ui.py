@@ -5,14 +5,13 @@ from tkinter import HORIZONTAL, VERTICAL, ttk, StringVar
 import Download
 from ch341_wrapper import ch341
 
-version = "0.1"
-my_gui = None
+from HDZeroIcon import HDZeroIcon
 
+version = "0.1"
 
 class MyGUI:
     def __init__(self, master):
         self.master = master
-        master.title("My GUI")
 
         self.SelectedFirmwareString = ''
         self.target = 0
@@ -54,6 +53,7 @@ class MyGUI:
         self.master.resizable(False, False)
         self.master.title(titleString)
         self.master.configure(bg="#303030")
+        
         if os.path.exists(iconPath):
             self.master.iconbitmap(iconPath)
 
@@ -258,7 +258,6 @@ class MyGUI:
 
 
 def UI_mainloop():
-    global my_gui
     root = tk.Tk()
     my_gui = MyGUI(root)
     my_gui.update_connection_state()
