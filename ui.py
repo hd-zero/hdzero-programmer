@@ -5,7 +5,9 @@ from tkinter import HORIZONTAL, VERTICAL, ttk, StringVar
 import Download
 from ch341_wrapper import ch341
 
-from HDZeroIcon import HDZeroIcon
+from icon32 import icon32
+import base64
+import io
 
 version = "0.1"
 
@@ -53,9 +55,12 @@ class MyGUI:
         self.master.resizable(False, False)
         self.master.title(titleString)
         self.master.configure(bg="#303030")
-        
-        if os.path.exists(iconPath):
-            self.master.iconbitmap(iconPath)
+
+        icon_base64 = base64.b64decode(icon32)
+        icon_bytes = io.BytesIO(icon_base64)
+        icon = tk.PhotoImage(data=icon_bytes.getvalue())
+
+        self.master.iconphoto(True, icon)
 
     def create_version_combobox(self):
         self.ver_combobox = ttk.Combobox(self.master, state='readonly')
