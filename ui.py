@@ -11,6 +11,7 @@ import io
 
 version = "0.1"
 
+
 class MyGUI:
     def __init__(self, master):
         self.master = master
@@ -24,8 +25,11 @@ class MyGUI:
         self.auto_btn = None
         self.prog_state = None
         self.vtx_state = None
+        self.init_done = 0
 
-        Download.LoadGithubFirmware()
+        self.updateCnt = 0
+        
+        self.version_select = 0
 
         self.create_root_window()
         self.create_version_combobox()
@@ -33,6 +37,7 @@ class MyGUI:
         self.create_auto_detect_btn()
         self.create_prog_state()
         self.create_vtx_state()
+        self.switch_version_action()
 
         # self.CreateSeparator()
         # self.CreateLabel()
@@ -66,13 +71,16 @@ class MyGUI:
         self.ver_combobox = ttk.Combobox(self.master, state='readonly')
         self.ver_combobox.anchor = 'NW'
         self.ver_combobox.place(width=200, height=24, x=20, y=20)
+
+        self.ver_combobox['value'] = Download.version_list[self.version_select]
+        self.ver_combobox.current(0)
         self.ver_combobox.config(state=tk.DISABLED)
 
     def create_target_combobox(self):
         self.target_combobox = ttk.Combobox(self.master, state='readonly')
         self.target_combobox.anchor = 'NW'
         self.target_combobox.place(width=200, height=24, x=20, y=50)
-        self.target_combobox['value'] = Download.ParseTargetList()
+        self.target_combobox['value'] = Download.vtx_name_list[0]
         self.target_combobox.current(0)
         self.target_combobox.config(state=tk.DISABLED)
 
@@ -83,18 +91,45 @@ class MyGUI:
         self.auto_btn.config(state=tk.DISABLED)
 
     def create_prog_state(self):
-        self.prog_state = ttk.Label(self.master, text="PROG", border=1, relief='ridge')
+        self.prog_state = ttk.Label(
+            self.master, text="PROG", border=1, relief='ridge')
         self.prog_state.anchor = 'NW'
-        self.prog_state.place(width=38, height=20, x=602, y=0)
+        self.prog_state.place(width=38, height=20, x=602, y=300)
         self.prog_state.config(background="red")
 
     def create_vtx_state(self):
-        self.vtx_state = ttk.Label(self.master, text="VTX", border=1, relief='ridge')
+        self.vtx_state = ttk.Label(
+            self.master, text="VTX", border=1, relief='ridge')
         self.vtx_state.anchor = 'NW'
-        self.vtx_state.place(width=28, height=20, x=574, y=0)
+        self.vtx_state.place(width=28, height=20, x=574, y=300)
         self.vtx_state.config(background="red")
 
+    def switch_version_callback(self, event):
+        self.version_select = self.ver_combobox.current()
+        self.target_combobox['value'] = Download.vtx_name_list[self.version_select]
+        self.target_combobox.current(0)
+
+    def switch_version_action(self):
+        self.ver_combobox.bind("<<ComboboxSelected>>", self.switch_version_callback)
+
+
     def update_connection_state(self):
+
+        # init download online info
+        if self.init_done == 0 and self.updateCnt != 0:
+            Download.DownloadReleases()
+            Download.ParseReleaseInfo()
+
+            self.ver_combobox['value'] = Download.version_list
+            self.ver_combobox.current(0)
+            self.ver_combobox.config(state=tk.DISABLED)
+
+            self.target_combobox['value'] = Download.vtx_name_list[0]
+            self.target_combobox.current(0)
+            self.target_combobox.config(state=tk.DISABLED)
+
+            self.init_done = 1
+
         if ch341.dev_connected == 0:
             self.prog_state.config(background="#a0a0a0")
         elif ch341.dev_connected == 1:
@@ -107,13 +142,16 @@ class MyGUI:
 
         if ch341.flash_connected == 1 and ch341.dev_connected == 1:
             self.auto_btn.config(state=tk.NORMAL)
-            self.target_combobox.config(state=tk.NORMAL)
-            self.ver_combobox.config(state=tk.NORMAL)
+            self.target_combobox.config(state="readonly")
+            self.ver_combobox.config(state="readonly")
         else:
             self.auto_btn.config(state=tk.DISABLED)
             self.target_combobox.config(state=tk.DISABLED)
+            self.target_combobox.current(0)
             self.ver_combobox.config(state=tk.DISABLED)
+            self.ver_combobox.current(0)
 
+        self.updateCnt += 1
         self.master.after(100, self.update_connection_state)
 
     # def CreateSeparator(self):
@@ -152,13 +190,6 @@ class MyGUI:
     #     except:
     #         a = 1
 
-    #     if self.target == 0:
-    #         img_path = './Data/Github/HDZero.png'
-    #     else:
-    #         img_path = './Data/Github/Target_Info/' + \
-    #             Download.targetTypeList[self.target-1] + '/' + \
-    #             Download.targetTypeList[self.target-1] + '.png'
-
     #     try:
     #         img = Image.open(img_path)
     #         photo = ImageTk.PhotoImage(img)
@@ -180,16 +211,6 @@ class MyGUI:
     # #    self.targetLabel = tk.Label(self, text=self.targetNameString.get())
     # #    self.targetLabel.anchor = 'NW'
     # #    self.targetLabel.place(x=80, y=340)
-
-    # def UpdateTargetNameString(self):
-    #     if self.target == 0:
-    #         self.targetNameString.set('disconnected')
-    #     elif self.target == 255:
-    #         self.targetNameString.set('unknow')
-    #     elif self.target > Download.targetTypeNum:
-    #         self.targetNameString.set('unknow')
-    #     else:
-    #         self.targetNameString.set(Download.targetTypeList[self.target-1])
 
     # def CreateLoadButton(self):
     #     buttonLoadGithubString = "Load Firmware[Github]"

@@ -2,6 +2,7 @@ import os
 import time
 import wget
 import shutil
+import json
 
 LocalRootPath = './Data/Github/'
 LocaLFirmwarePath = LocalRootPath+'firmware/'
@@ -17,6 +18,11 @@ WebHDZeroString = WebRootPath + 'HDZero.png'
 downloadCommand = 0
 targetTypeNum = 0
 targetTypeList = []
+target_List = []
+firmware_link_list = []
+version_list = ["Choose a Version"]
+vtx_name_list = [["Choose a VTX"]]
+
 
 def DetectLocalPath():
     if not os.path.exists(LocalRootPath):
@@ -55,8 +61,6 @@ def DownloadTargetList():
 
     # except:
     #     print('\r\nDBG:Download Failed. Please check if the network is connected.')
-
-    
 
 
 def ParseTargetList():
@@ -99,11 +103,58 @@ def DownloadTargetPicture():
     print('DBG:', 'Download Target Picture done.\r\n')
 
 
-def LoadGithubFirmware():
+def DownloadOnlineFile(OnlinePath, LocalPath):
+    try:
+        print('\nDBG:', 'Downloading ' + OnlinePath)
+        fname = wget.download(url=OnlinePath, out=LocalPath)
+        return 1
+
+    except:
+        print('\r\nDBG:Download Failed. Please check if the network is connected.')
+        return 0
+
+
+def ParseReleaseInfo():
+    global version_list
+    try:
+        with open('./Data/Github/releases.json') as f:
+            data = json.load(f)
+        print()
+        for i in range(len(data)):
+            #parser version number
+            version_list.append(data[i]['tag_name'])
+            
+            # parser firmware link and target name
+            link_list = []
+            name_list = []
+            name_list.append("Choose a VTX")
+            for j in range(len(data[i]['assets'])):
+                link_list.append(data[i]['assets'][j]['browser_download_url'])
+                name_start = link_list[j].rfind('/') + len('/')
+                name_end = link_list[j].index(".zip", name_start)
+                name_list.append(link_list[j][name_start:name_end])
+            firmware_link_list.append(link_list)
+            vtx_name_list.append(name_list)
+
+    except:
+        print()
+        version_list.append("Choose a Version")
+        print("something error")
+
+    return version_list
+
+
+def DownloadReleases():
     DetectLocalPath()
     DownloadTargetList()
-    # ParseTargetList()
-    # DownloadTargetPicture()
+    if DownloadOnlineFile("https://api.github.com/repos/hd-zero/hdzero-vtx/releases", "./Data/Temp/releases.json") == 1:
+        # if DownloadOnlineFile("https://api.github.com/repos/hd-zero/hdzero-goggle/releases", "./Data/Temp/releases.json") == 1:
+        # if DownloadOnlineFile("https://api.github.com/repos/betaflight/betaflight/releases", "./Data/Temp/releases.json") == 1:
+        shutil.copy2("./Data/Temp/releases.json",
+                     "./Data/Github/releases.json")
+
+    if os.path.exists("./Data/Temp/releases.json"):
+        os.remove("./Data/Temp/releases.json")
 
 
 def LoadGithubFirmwareRequest():
@@ -114,8 +165,8 @@ def LoadGithubFirmwareRequest():
 def DownloadThreadProc():
     global downloadCommand
     while True:
-        #if downloadCommand == 1:
-        #    DetectLocalPath()
-        #    LoadGithubFirmware()
-        #    downloadCommand = 0
+        # if downloadCommand == 1:
+        #     DetectLocalPath()
+        #     LoadGithubFirmware()
+        #     downloadCommand = 0
         time.sleep(0.1)
