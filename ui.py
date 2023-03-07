@@ -157,7 +157,6 @@ class MyGUI:
             self.master, text='Load Firmawre(Online)', command=self.load_firmware_online_callback)
         self.load_fw_online_btn.anchor = 'NW'
         self.load_fw_online_btn.place(width=150, height=24, x=20, y=100)
-        # self.load_fw_online_btn.config(state=tk.DISABLED)
 
     def load_firmware_local_callback(event):
         global my_gui
@@ -171,14 +170,12 @@ class MyGUI:
             print("local firmware error")
             my_gui.fw_state.config(text="FW:")
             my_gui.fw_state.config(background="#a0a0a0")
-        
 
     def create_load_firmnware_local_btn(self):
         self.load_fw_local_btn = ttk.Button(
             self.master, text='Load Firmawre(Local)', command=self.load_firmware_local_callback)
         self.load_fw_local_btn.anchor = 'NW'
         self.load_fw_local_btn.place(width=150, height=24, x=180, y=100)
-        # self.load_fw_local_btn.config(state=tk.DISABLED)
 
     def update_connection_state(self):
         # init download online info
@@ -188,25 +185,19 @@ class MyGUI:
 
             self.ver_combobox['value'] = Download.version_list
             self.ver_combobox.current(0)
-            # self.ver_combobox.config(state=tk.DISABLED)
 
             self.target_combobox['value'] = Download.vtx_name_list[0]
             self.target_combobox.current(0)
-            # self.target_combobox.config(state=tk.DISABLED)
-
-            # self.load_fw_online_btn.config(state=tk.DISABLED)
 
             self.init_done = 1
 
         if ch341.dev_connected == 0:
             self.prog_state.config(background="#a0a0a0")
-            self.fw_state.config(background="#a0a0a0")
         elif ch341.dev_connected == 1:
             self.prog_state.config(background="#42a459")
 
         if ch341.flash_connected == 0:
             self.vtx_state.config(background="#a0a0a0")
-            self.fw_state.config(background="#a0a0a0")
         elif ch341.dev_connected == 1:
             self.vtx_state.config(background="#42a459")
 
@@ -215,6 +206,7 @@ class MyGUI:
             self.target_combobox.config(state="readonly")
             self.ver_combobox.config(state="readonly")
             self.load_fw_online_btn.config(state=tk.NORMAL)
+            self.load_fw_local_btn.config(state=tk.NORMAL)
         else:
             self.auto_btn.config(state=tk.DISABLED)
             self.target_combobox.config(state=tk.DISABLED)
@@ -222,6 +214,7 @@ class MyGUI:
             self.ver_combobox.config(state=tk.DISABLED)
             self.ver_combobox.current(0)
             self.load_fw_online_btn.config(state=tk.DISABLED)
+            self.load_fw_local_btn.config(state=tk.DISABLED)
 
         # check vtx id done
         if self.ch341Command == 1 and ch341.command == 0:
