@@ -2,6 +2,7 @@ from PIL import Image, ImageTk
 import os
 import tkinter as tk
 from tkinter import HORIZONTAL, VERTICAL, ttk, StringVar
+from tkinter import filedialog
 import Download
 from ch341_wrapper import *
 
@@ -46,10 +47,11 @@ class MyGUI:
         self.create_target_combobox()
         self.switch_target_action()
         self.create_auto_detect_btn()
+        self.create_load_firmnware_online_btn()
+        self.create_load_firmnware_local_btn()
+        self.create_fw_state()
         self.create_prog_state()
         self.create_vtx_state()
-        self.create_load_firmnware_online_btn()
-        self.create_fw_state()
 
     def create_root_window(self):
         titleString = "HDZero VTX Programmer"+" v"+version
@@ -154,8 +156,29 @@ class MyGUI:
         self.load_fw_online_btn = ttk.Button(
             self.master, text='Load Firmawre(Online)', command=self.load_firmware_online_callback)
         self.load_fw_online_btn.anchor = 'NW'
-        self.load_fw_online_btn.place(width=150, height=24, x=40, y=100)
-        self.load_fw_online_btn.config(state=tk.DISABLED)
+        self.load_fw_online_btn.place(width=150, height=24, x=20, y=100)
+        # self.load_fw_online_btn.config(state=tk.DISABLED)
+
+    def load_firmware_local_callback(event):
+        global my_gui
+        selected_file_path = filedialog.askopenfilename()
+        if os.path.getsize(selected_file_path) <= 65536:
+            ch341.fw_path = selected_file_path
+            my_gui.fw_state.config(text="FW:Local")
+            my_gui.fw_state.config(background="#42a459")
+        else:
+            print()
+            print("local firmware error")
+            my_gui.fw_state.config(text="FW:")
+            my_gui.fw_state.config(background="#a0a0a0")
+        
+
+    def create_load_firmnware_local_btn(self):
+        self.load_fw_local_btn = ttk.Button(
+            self.master, text='Load Firmawre(Local)', command=self.load_firmware_local_callback)
+        self.load_fw_local_btn.anchor = 'NW'
+        self.load_fw_local_btn.place(width=150, height=24, x=180, y=100)
+        # self.load_fw_local_btn.config(state=tk.DISABLED)
 
     def update_connection_state(self):
         # init download online info
