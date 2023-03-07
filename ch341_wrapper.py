@@ -21,6 +21,7 @@ class ch341_class(object):
         self.fw_done_size = 0
         self.update_state = 0
         self.percent = 0
+        self.write_crc = 0
 
         try:
             self.dll = cdll.LoadLibrary(self.dll_path)
@@ -125,6 +126,8 @@ def ch341ThreadProc():
             flash_erase(ch341)
             ch341.update_state = 2
             flash_write_file(ch341)
+            print("write crc:", ch341.write_crc)
+            ch341.update_state = 3
 
 
             ch341.command = 0
