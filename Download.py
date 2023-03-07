@@ -19,9 +19,6 @@ WebHDZeroString = WebRootPath + 'HDZero.png'
 downloadLink = ""
 localTemp = ""
 downloadCommand = 0
-targetTypeNum = 0
-targetTypeList = []
-target_List = []
 firmware_link_list = {}
 version_list = ["Choose a Version"]
 vtx_name_list = [["Choose a VTX"]]
@@ -108,33 +105,47 @@ def ParseCommonInfo():
         vtx_name_list[0][1:] = sorted(vtx_name_list[0][1:])
 
 def DownloadReleases():
+    ret = 0
     DetectLocalPath()
     if DownloadOnlineFile("https://api.github.com/repos/hd-zero/hdzero-vtx/releases", "./Data/Temp/releases.json") == 1:
         shutil.copy2("./Data/Temp/releases.json",
                      "./Data/Github/releases.json")
-
+        ret = 1
     if os.path.exists("./Data/Temp/releases.json"):
         os.remove("./Data/Temp/releases.json")
-
+    return ret
 
 def DownloadCommon():
+    ret = 0
     DetectLocalPath()
     if DownloadOnlineFile("https://raw.githubusercontent.com/hd-zero/hdzero-vtx/main/src/common.h", "./Data/Temp/common") == 1:
         shutil.copy2("./Data/Temp/common",
                      "./Data/Github/common")
-
+        ret = 1
     if os.path.exists("./Data/Temp/common"):
         os.remove("./Data/Temp/common")
-
+    return ret
 
 def DownloadThreadProc():
     global downloadCommand
+    global firmware_link_list
+    global version_list
+    global vtx_name_list
+    global vtx_id_list
+    global user_vtx_id
+    
+    ParseReleaseInfo()
+    ParseCommonInfo()
     while True:
         if downloadCommand == 1:
-            DownloadReleases()
-            ParseReleaseInfo()
-            DownloadCommon()
-            ParseCommonInfo()
+            if DownloadReleases() and DownloadCommon():
+                firmware_link_list = {}
+                version_list = ["Choose a Version"]
+                vtx_name_list = [["Choose a VTX"]]
+                vtx_id_list = {}
+                user_vtx_id = 0xff
+                ParseReleaseInfo()
+                ParseCommonInfo()
             downloadCommand = 0
         elif downloadCommand == 2:
             if os.path.exists(localTemp):
