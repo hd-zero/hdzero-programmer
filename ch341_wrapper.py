@@ -17,6 +17,11 @@ class ch341_class(object):
         self.command = 0
         self.vtx_id = 0
         self.fw_path = ""
+        self.fw_full_size = 0
+        self.fw_done_size = 0
+        self.update_state = 0
+        self.percent = 0
+
         try:
             self.dll = cdll.LoadLibrary(self.dll_path)
         except:
@@ -100,6 +105,7 @@ def flash_connect(ch341):
                     print("DBG: flash is disconnected")
                     ch341.flash_connected = 0
 
+
 ch341 = ch341_class()
 def ch341ThreadProc():
     print('start ch341ThreadProc')
@@ -111,5 +117,18 @@ def ch341ThreadProc():
             flash_read_vtx_id(ch341)
             ch341.vtx_id = int.from_bytes(ch341.iobuffer[4], byteorder='big')
             ch341.command = 0
+        elif ch341.command == 2:
+            ch341.fw_full_size = os.path.getsize(ch341.fw_path)
+            ch341.fw_done_size = 0
+            ch341.percent = 0
+            ch341.update_state = 1
+            flash_erase(ch341)
+            ch341.update_state = 2
+            flash_write_file(ch341)
+
+
+            ch341.command = 0
+        else:
+            ch341.update_state = 0
 
         time.sleep(0.1)

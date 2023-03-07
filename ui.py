@@ -29,8 +29,9 @@ class MyGUI:
         self.prog_state = None
         self.vtx_state = None
         self.fw_state = None
-        self.load_fw_online_btn = 0
-        self.load_fw_local_btn = 0
+        self.update_btn = None
+        self.load_fw_online_btn = None
+        self.load_fw_local_btn = None
         self.init_done = 0
         self.downloadCommand = 0
         self.ch341Command = 0
@@ -49,6 +50,7 @@ class MyGUI:
         self.create_auto_detect_btn()
         self.create_load_firmnware_online_btn()
         self.create_load_firmnware_local_btn()
+        self.create_update_button()
         self.create_fw_state()
         self.create_prog_state()
         self.create_vtx_state()
@@ -141,7 +143,6 @@ class MyGUI:
     def load_firmware_online_callback(event):
         global my_gui
         if my_gui.vtx_index_select != 0 and my_gui.ver_index_select != 0:
-            a = firmware_link_list[my_gui.vtx_name_select]
             Download.downloadLink = firmware_link_list[my_gui.vtx_name_select]
             Download.localTemp = "./Data/Temp/fw.zip"
             Download.downloadCommand = 2
@@ -177,6 +178,25 @@ class MyGUI:
         self.load_fw_local_btn.anchor = 'NW'
         self.load_fw_local_btn.place(width=150, height=24, x=180, y=100)
 
+    def update_callback(event):
+        global my_gui
+        ch341.command = 2
+        my_gui.ch341Command = 2
+        my_gui.load_fw_online_btn.config(state=tk.DISABLED)
+        my_gui.load_fw_local_btn.config(state=tk.DISABLED)
+        my_gui.ver_combobox.config(state=tk.DISABLED)
+        my_gui.target_combobox.config(state=tk.DISABLED)
+        my_gui.update_btn.config(state=tk.DISABLED)
+        my_gui.auto_btn.config(state=tk.DISABLED)
+
+
+    def create_update_button(self):
+        self.update_btn = ttk.Button(
+            self.master, text='Update', command=self.update_callback)
+        self.update_btn.anchor = 'NW'
+        self.update_btn.place(width=70, height=24, x=340, y=100)
+
+
     def update_connection_state(self):
         # init download online info
         if self.updateCnt == 1:
@@ -201,20 +221,21 @@ class MyGUI:
         elif ch341.dev_connected == 1:
             self.vtx_state.config(background="#42a459")
 
-        if ch341.flash_connected == 1 and ch341.dev_connected == 1:
-            self.auto_btn.config(state=tk.NORMAL)
-            self.target_combobox.config(state="readonly")
-            self.ver_combobox.config(state="readonly")
-            self.load_fw_online_btn.config(state=tk.NORMAL)
-            self.load_fw_local_btn.config(state=tk.NORMAL)
-        else:
-            self.auto_btn.config(state=tk.DISABLED)
-            self.target_combobox.config(state=tk.DISABLED)
-            self.target_combobox.current(0)
-            self.ver_combobox.config(state=tk.DISABLED)
-            self.ver_combobox.current(0)
-            self.load_fw_online_btn.config(state=tk.DISABLED)
-            self.load_fw_local_btn.config(state=tk.DISABLED)
+        if self.ch341Command != 2:
+            if ch341.flash_connected == 1 and ch341.dev_connected == 1:
+                self.auto_btn.config(state=tk.NORMAL)
+                self.target_combobox.config(state="readonly")
+                self.ver_combobox.config(state="readonly")
+                self.load_fw_online_btn.config(state=tk.NORMAL)
+                self.load_fw_local_btn.config(state=tk.NORMAL)
+            else:
+                self.auto_btn.config(state=tk.DISABLED)
+                self.target_combobox.config(state=tk.DISABLED)
+                self.target_combobox.current(0)
+                self.ver_combobox.config(state=tk.DISABLED)
+                self.ver_combobox.current(0)
+                self.load_fw_online_btn.config(state=tk.DISABLED)
+                self.load_fw_local_btn.config(state=tk.DISABLED)
 
         # check vtx id done
         if self.ch341Command == 1 and ch341.command == 0:
@@ -242,9 +263,15 @@ class MyGUI:
                 file.close()
             print("unzip done")
             self.downloadCommand = 0
-            ch341.fw_path = "./Data/Temp/HDZERO_VTX.bin"
+            ch341.fw_path = "./Data/Temp/"+filename
             self.fw_state.config(text="FW:Online")
             self.fw_state.config(background="#42a459")
+        
+        if self.ch341Command != 2:
+            if self.fw_state.cget('text') =="FW:":
+                self.update_btn.config(state=tk.DISABLED)
+            else:
+                self.update_btn.config(state=tk.NORMAL)
 
         self.updateCnt += 1
         self.master.after(100, self.update_connection_state)
