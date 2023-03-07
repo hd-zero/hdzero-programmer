@@ -14,6 +14,9 @@ class ch341_class(object):
         self.iIndex = 0
         self.flash_connected = 0
         self.status = 0 # 0:idle
+        self.command = 0
+        self.vtx_id = 0
+        self.fw_path = ""
         try:
             self.dll = cdll.LoadLibrary(self.dll_path)
         except:
@@ -104,4 +107,9 @@ def ch341ThreadProc():
     while True:
         ch341.dev_connect()
         flash_connect(ch341)
+        if ch341.command == 1:
+            flash_read_vtx_id(ch341)
+            ch341.vtx_id = int.from_bytes(ch341.iobuffer[4], byteorder='big')
+            ch341.command = 0
+
         time.sleep(0.1)

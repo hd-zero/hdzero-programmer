@@ -15,13 +15,18 @@ WebRootPath = 'https://raw.githubusercontent.com/ligenxxxx/HDZeroFirmware/main/'
 WebTargetListString = WebRootPath + 'TargetList'
 WebHDZeroString = WebRootPath + 'HDZero.png'
 
+
+downloadLink = ""
+localTemp = ""
 downloadCommand = 0
 targetTypeNum = 0
 targetTypeList = []
 target_List = []
-firmware_link_list = []
+firmware_link_list = {}
 version_list = ["Choose a Version"]
 vtx_name_list = [["Choose a VTX"]]
+vtx_id_list = {}
+user_vtx_id = 0xff
 
 
 def DetectLocalPath():
@@ -37,70 +42,6 @@ def DetectLocalPath():
         f = open(LocalTargetListString, "w")
         f.write("0")
         f.close()
-    # else:
-    #     ParseTargetList()
-
-
-def DownloadTargetList():
-    print('\r\nDBG:Downloading TargetList...')
-    try:
-        wget.download(url=WebTargetListString, out=LocaLTempPath)
-        if os.path.exists(LocalTargetListString):
-            os.remove(LocalTargetListString)
-        shutil.move(LocaLTempPath+'TargetList', LocalTargetListString)
-
-    except:
-        print('\r\nDBG:Download Failed. Please check if the network is connected.')
-
-    # print('\r\nDBG:Downloading HDZero.png...')
-    # try:
-    #     wget.download(url=WebHDZeroString, out=LocaLTempPath)
-    #     if os.path.exists(LocalHDZeroString):
-    #         os.remove(LocalHDZeroString)
-    #     shutil.move(LocaLTempPath+'HDZero.png', LocalHDZeroString)
-
-    # except:
-    #     print('\r\nDBG:Download Failed. Please check if the network is connected.')
-
-
-def ParseTargetList():
-    global targetTypeNum
-    global targetTypeList
-    f = open(LocalTargetListString, "r")
-
-    # parse targetTypeNum
-    line = f.readline()
-    targetTypeNum = int(line)
-    print('\r\nDBG:targetTypeNum:%d' % targetTypeNum)
-
-    # parse targetTypeList
-    targetTypeList = f.read().splitlines()
-    targetTypeList.insert(0, "Choose a VTX")
-    print('DBG:', targetTypeList)
-    f.close()
-
-    return targetTypeList
-
-
-def DownloadTargetPicture():
-    print('DBG:', 'Downloading Target Picture...')
-    for t in targetTypeList:
-        webTargetPicturePath = WebRootPath + 'Target_Info/' + t + '/' + t + '.png'
-        localTargetPicturePath = LocalRootPath + 'Target_Info/' + t + '/' + t + '.png'
-        try:
-            print('\nDBG:', 'Downloading '+t+'.png...')
-            fname = wget.download(url=webTargetPicturePath, out=LocaLTempPath)
-            if not os.path.exists(LocalRootPath + 'Target_Info/' + t + '/'):
-                os.makedirs(LocalRootPath + 'Target_Info/' + t + '/')
-            if os.path.exists(localTargetPicturePath):
-                os.remove(localTargetPicturePath)
-            shutil.move(LocaLTempPath+t + '.png', localTargetPicturePath)
-
-        except:
-            print('\r\nDBG:Download Failed. Please check if the network is connected.')
-            return
-    print()
-    print('DBG:', 'Download Target Picture done.\r\n')
 
 
 def DownloadOnlineFile(OnlinePath, LocalPath):
@@ -115,7 +56,6 @@ def DownloadOnlineFile(OnlinePath, LocalPath):
 
 
 def ParseReleaseInfo():
-    global version_list
     try:
         with open('./Data/Github/releases.json') as f:
             data = json.load(f)
@@ -133,23 +73,43 @@ def ParseReleaseInfo():
                 name_start = link_list[j].rfind('/') + len('/')
                 name_end = link_list[j].index(".zip", name_start)
                 name_list.append(link_list[j][name_start:name_end])
-            firmware_link_list.append(link_list)
+
+            for j in range(1, len(name_list)):
+                firmware_link_list.update({name_list[j] : link_list[j - 1]})
             vtx_name_list.append(name_list)
+        
 
     except:
         print()
-        version_list.append("Choose a Version")
         print("something error")
 
-    return version_list
+def ParseCommonInfo():
+    with open("./Data/Github/common", 'r') as file:
+        lines = file.readlines()
+        start = 0
+        id_list = []
+        for i in range(len(lines)):
+            if start == 1:
+                words = lines[i].split()
+                for j in range(len(words)):
+                    if words[j] == "defined":
+                        vtx_name_list[0].append(words[j+1].lower())
+                    if words[j] == "VTX_ID":
+                        if words[j+1] != "0x00":
+                            word = words[j+1].strip("0x")
+                            id_list.append(int(words[j+1].strip("0x"), 16))
+            if lines[i] == "/* define VTX ID start */\n":
+                start = 1
+            elif lines[i] == "/* define VTX ID end */\n":
+                start = 0
 
+        for i in range(1, len(vtx_name_list[0])):
+            vtx_id_list.update({vtx_name_list[0][i]: id_list[i-1]})
+        vtx_name_list[0][1:] = sorted(vtx_name_list[0][1:])
 
 def DownloadReleases():
     DetectLocalPath()
-    DownloadTargetList()
     if DownloadOnlineFile("https://api.github.com/repos/hd-zero/hdzero-vtx/releases", "./Data/Temp/releases.json") == 1:
-        # if DownloadOnlineFile("https://api.github.com/repos/hd-zero/hdzero-goggle/releases", "./Data/Temp/releases.json") == 1:
-        # if DownloadOnlineFile("https://api.github.com/repos/betaflight/betaflight/releases", "./Data/Temp/releases.json") == 1:
         shutil.copy2("./Data/Temp/releases.json",
                      "./Data/Github/releases.json")
 
@@ -157,16 +117,28 @@ def DownloadReleases():
         os.remove("./Data/Temp/releases.json")
 
 
-def LoadGithubFirmwareRequest():
-    global downloadCommand
-    downloadCommand = 1
+def DownloadCommon():
+    DetectLocalPath()
+    if DownloadOnlineFile("https://raw.githubusercontent.com/hd-zero/hdzero-vtx/main/src/common.h", "./Data/Temp/common") == 1:
+        shutil.copy2("./Data/Temp/common",
+                     "./Data/Github/common")
+
+    if os.path.exists("./Data/Temp/common"):
+        os.remove("./Data/Temp/common")
 
 
 def DownloadThreadProc():
     global downloadCommand
     while True:
-        # if downloadCommand == 1:
-        #     DetectLocalPath()
-        #     LoadGithubFirmware()
-        #     downloadCommand = 0
-        time.sleep(0.1)
+        if downloadCommand == 1:
+            DownloadReleases()
+            ParseReleaseInfo()
+            DownloadCommon()
+            ParseCommonInfo()
+            downloadCommand = 0
+        elif downloadCommand == 2:
+            if os.path.exists(localTemp):
+                os.remove(localTemp)
+            DownloadOnlineFile(downloadLink, localTemp)
+            downloadCommand = 0
+        time.sleep(0.01)

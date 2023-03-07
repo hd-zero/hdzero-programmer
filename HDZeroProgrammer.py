@@ -17,6 +17,5 @@ def main():
         target=DownloadThreadProc, name='download_file')
     DownloadFile_Thread.start()
 
-
 if __name__ == '__main__':
     main()

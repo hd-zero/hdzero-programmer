@@ -1,4 +1,5 @@
 import time
+from Download import *
 
 class flash_class(object):
     def __init__(self):
@@ -30,3 +31,16 @@ def flash_connect(ch341):
             return
         else:
             time.sleep(0.2)
+
+def flash_read_vtx_id(ch341):
+    raddr = 0x10000
+    ch341.iobuffer[0] = 0x03;
+    ch341.iobuffer[1] = (raddr >> 16) & 0xff
+    ch341.iobuffer[2] = (raddr >> 8) & 0xff
+    ch341.iobuffer[3] = raddr & 0xff
+    ch341.iobuffer[4] = 0x00
+    ch341.ilength = 16
+    
+    ch341.set_stream(0)
+    ch341.stream_spi4()
+    ch341.set_stream(1)

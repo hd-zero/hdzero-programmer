@@ -3,11 +3,13 @@ import os
 import tkinter as tk
 from tkinter import HORIZONTAL, VERTICAL, ttk, StringVar
 import Download
-from ch341_wrapper import ch341
+from ch341_wrapper import *
 
 from icon32 import icon32
 import base64
 import io
+
+import zipfile
 
 version = "0.1"
 
@@ -25,32 +27,32 @@ class MyGUI:
         self.auto_btn = None
         self.prog_state = None
         self.vtx_state = None
+        self.fw_state = None
+        self.load_fw_online_btn = 0
+        self.load_fw_local_btn = 0
         self.init_done = 0
+        self.downloadCommand = 0
+        self.ch341Command = 0
 
         self.updateCnt = 0
-        
-        self.version_select = 0
+
+        self.ver_index_select = 0
+        self.vtx_index_select = 0
+        self.vtx_name_select = ""
 
         self.create_root_window()
         self.create_version_combobox()
+        self.switch_version_action()
         self.create_target_combobox()
+        self.switch_target_action()
         self.create_auto_detect_btn()
         self.create_prog_state()
         self.create_vtx_state()
-        self.switch_version_action()
-
-        # self.CreateSeparator()
-        # self.CreateLabel()
-        # self.CreateLoadButton()
-        # self.CreateDetectButton()
-        # self.CreateDefineTargetButton()
-        # self.CreateFlashButton()
-        # self.CreateTargetPicture()
-        # self.CreateTargetNameLabel()
+        self.create_load_firmnware_online_btn()
+        self.create_fw_state()
 
     def create_root_window(self):
         titleString = "HDZero VTX Programmer"+" v"+version
-        iconPath = 'Data/HDZero_16.ico'
         windowX = 640
         windowY = 320
         offsetX = (self.master.winfo_screenwidth() - windowX)/2
@@ -72,9 +74,9 @@ class MyGUI:
         self.ver_combobox.anchor = 'NW'
         self.ver_combobox.place(width=200, height=24, x=20, y=20)
 
-        self.ver_combobox['value'] = Download.version_list[self.version_select]
+        self.ver_combobox['value'] = Download.version_list
         self.ver_combobox.current(0)
-        self.ver_combobox.config(state=tk.DISABLED)
+        # self.ver_combobox.config(state=tk.DISABLED)
 
     def create_target_combobox(self):
         self.target_combobox = ttk.Combobox(self.master, state='readonly')
@@ -82,61 +84,106 @@ class MyGUI:
         self.target_combobox.place(width=200, height=24, x=20, y=50)
         self.target_combobox['value'] = Download.vtx_name_list[0]
         self.target_combobox.current(0)
-        self.target_combobox.config(state=tk.DISABLED)
+        # self.target_combobox.config(state=tk.DISABLED)
+
+    def auto_detect_btn_callback(event):
+        global my_gui
+        ch341.command = 1
+        my_gui.ch341Command = 1
 
     def create_auto_detect_btn(self):
-        self.auto_btn = ttk.Button(self.master, text='Auto detect')
+        self.auto_btn = ttk.Button(
+            self.master, text='Auto detect', command=self.auto_detect_btn_callback)
         self.auto_btn.anchor = 'NW'
         self.auto_btn.place(width=80, height=24, x=240, y=50)
-        self.auto_btn.config(state=tk.DISABLED)
+        # self.auto_btn.config(state=tk.DISABLED)
 
-    def create_prog_state(self):
-        self.prog_state = ttk.Label(
-            self.master, text="PROG", border=1, relief='ridge')
-        self.prog_state.anchor = 'NW'
-        self.prog_state.place(width=38, height=20, x=602, y=300)
-        self.prog_state.config(background="red")
+    def create_fw_state(self):
+        self.fw_state = ttk.Label(
+            self.master, text="FW:", border=1, relief='ridge')
+        self.fw_state.anchor = 'NW'
+        self.fw_state.place(width=74, height=20, x=500, y=300)
+        self.fw_state.config(background="#a0a0a0")
 
     def create_vtx_state(self):
         self.vtx_state = ttk.Label(
             self.master, text="VTX", border=1, relief='ridge')
         self.vtx_state.anchor = 'NW'
         self.vtx_state.place(width=28, height=20, x=574, y=300)
-        self.vtx_state.config(background="red")
+        self.vtx_state.config(background="#a0a0a0")
+
+    def create_prog_state(self):
+        self.prog_state = ttk.Label(
+            self.master, text="PROG", border=1, relief='ridge')
+        self.prog_state.anchor = 'NW'
+        self.prog_state.place(width=38, height=20, x=602, y=300)
+        self.prog_state.config(background="#a0a0a0")
 
     def switch_version_callback(self, event):
-        self.version_select = self.ver_combobox.current()
-        self.target_combobox['value'] = Download.vtx_name_list[self.version_select]
+        self.ver_index_select = self.ver_combobox.current()
+        self.target_combobox['value'] = Download.vtx_name_list[self.ver_index_select]
         self.target_combobox.current(0)
 
     def switch_version_action(self):
-        self.ver_combobox.bind("<<ComboboxSelected>>", self.switch_version_callback)
+        self.ver_combobox.bind("<<ComboboxSelected>>",
+                               self.switch_version_callback)
 
+    def switch_vtx_callback(self, event):
+        self.vtx_index_select = self.target_combobox.current()
+        self.vtx_name_select = self.target_combobox['value'][self.vtx_index_select]
+
+    def switch_target_action(self):
+        self.target_combobox.bind(
+            "<<ComboboxSelected>>", self.switch_vtx_callback)
+
+    def load_firmware_online_callback(event):
+        global my_gui
+        if my_gui.vtx_index_select != 0 and my_gui.ver_index_select != 0:
+            a = firmware_link_list[my_gui.vtx_name_select]
+            Download.downloadLink = firmware_link_list[my_gui.vtx_name_select]
+            Download.localTemp = "./Data/Temp/fw.zip"
+            Download.downloadCommand = 2
+            my_gui.downloadCommand = 2
+            my_gui.fw_state.config(text="FW:")
+            my_gui.fw_state.config(background="#a0a0a0")
+        else:
+            print()
+            print("Version and VTX must be specified.")
+
+    def create_load_firmnware_online_btn(self):
+        self.load_fw_online_btn = ttk.Button(
+            self.master, text='Load Firmawre(Online)', command=self.load_firmware_online_callback)
+        self.load_fw_online_btn.anchor = 'NW'
+        self.load_fw_online_btn.place(width=150, height=24, x=40, y=100)
+        self.load_fw_online_btn.config(state=tk.DISABLED)
 
     def update_connection_state(self):
-
         # init download online info
-        if self.init_done == 0 and self.updateCnt != 0:
-            Download.DownloadReleases()
-            Download.ParseReleaseInfo()
+        if self.updateCnt == 1:
+            Download.downloadCommand = 1
+        if self.updateCnt > 1 and Download.downloadCommand == 0 and self.init_done == 0:
 
             self.ver_combobox['value'] = Download.version_list
             self.ver_combobox.current(0)
-            self.ver_combobox.config(state=tk.DISABLED)
+            # self.ver_combobox.config(state=tk.DISABLED)
 
             self.target_combobox['value'] = Download.vtx_name_list[0]
             self.target_combobox.current(0)
-            self.target_combobox.config(state=tk.DISABLED)
+            # self.target_combobox.config(state=tk.DISABLED)
+
+            # self.load_fw_online_btn.config(state=tk.DISABLED)
 
             self.init_done = 1
 
         if ch341.dev_connected == 0:
             self.prog_state.config(background="#a0a0a0")
+            self.fw_state.config(background="#a0a0a0")
         elif ch341.dev_connected == 1:
             self.prog_state.config(background="#42a459")
 
         if ch341.flash_connected == 0:
             self.vtx_state.config(background="#a0a0a0")
+            self.fw_state.config(background="#a0a0a0")
         elif ch341.dev_connected == 1:
             self.vtx_state.config(background="#42a459")
 
@@ -144,146 +191,51 @@ class MyGUI:
             self.auto_btn.config(state=tk.NORMAL)
             self.target_combobox.config(state="readonly")
             self.ver_combobox.config(state="readonly")
+            self.load_fw_online_btn.config(state=tk.NORMAL)
         else:
             self.auto_btn.config(state=tk.DISABLED)
             self.target_combobox.config(state=tk.DISABLED)
             self.target_combobox.current(0)
             self.ver_combobox.config(state=tk.DISABLED)
             self.ver_combobox.current(0)
+            self.load_fw_online_btn.config(state=tk.DISABLED)
+
+        # check vtx id done
+        if self.ch341Command == 1 and ch341.command == 0:
+            j = 0
+            for i in Download.vtx_id_list:
+                if vtx_id_list[i] == ch341.vtx_id:
+                    print()
+                    print("Current vtx is", i)
+                    if self.target_combobox['value'][j] == i:
+                        self.target_combobox.current(j)
+                        self.vtx_name_select = i
+                        self.vtx_index_select = j
+                j += 1
+            self.ch341Command = 0
+
+        # download online firmware done
+        if self.downloadCommand == 2 and Download.downloadCommand == 0:
+            print()
+            print("download done, unziping...")
+            zfile = zipfile.ZipFile(Download.localTemp, 'r')
+            for filename in zfile.namelist():
+                data = zfile.read(filename)
+                file = open("./Data/Temp/"+filename, 'w+b')
+                file.write(data)
+                file.close()
+            print("unzip done")
+            self.downloadCommand = 0
+            ch341.fw_path = "./Data/Temp/HDZERO_VTX.bin"
+            self.fw_state.config(text="FW:Online")
+            self.fw_state.config(background="#42a459")
 
         self.updateCnt += 1
         self.master.after(100, self.update_connection_state)
 
-    # def CreateSeparator(self):
-    #     sep_hor1 = ttk.Separator(self, orient=HORIZONTAL)
-    #     sep_hor1.anchor = 'NW'
-    #     sep_hor1.place(width=800, height=1, x=0, y=400)
-    #     sep_hor2 = ttk.Separator(self, orient=HORIZONTAL)
-    #     sep_hor2.anchor = 'NW'
-    #     sep_hor2.place(width=600, height=1, x=0, y=690)
-    #     sep_ver1 = ttk.Separator(self, orient=VERTICAL)
-    #     sep_ver1.anchor = 'NW'
-    #     sep_ver1.place(width=1, height=400, x=300, y=0)
-
-    # def LoadGithubButtonCommand(self):
-    #     Download.LoadGithubFirmwareRequest()
-
-    # def DetectTargetButtonCommand(self):
-    #     # self.target = targetDetect()
-
-    #     self.target = self.target + 1
-    #     if self.target > Download.targetTypeNum:
-    #         self.target = 0
-
-    #     self.CreateTargetPicture()
-    #     #self.CreateTargetNameLabel()
-
-    # def CreateTargetPicture(self):
-    #     global photo
-
-    #     Witdh = 300
-    #     Height = 400
-
-    #     try:
-    #         if self.targetPicture != None:
-    #             self.targetPicture.destroy()
-    #     except:
-    #         a = 1
-
-    #     try:
-    #         img = Image.open(img_path)
-    #         photo = ImageTk.PhotoImage(img)
-    #         offsetX = (Witdh - photo.width()) / 2
-    #         offsetY = (Height - photo.height()) / 2
-    #         self.targetPicture = tk.Label(self, image=photo)
-    #         self.targetPicture.anchor = 'NW'
-    #         self.targetPicture.place(x=offsetX, y=offsetY)
-    #     except:
-    #         print("DBG:Can't find img_path")
-
-    # #def CreateTargetNameLabel(self):
-    # #    try:
-    # #        if self.targetLabel != None:
-    # #            self.targetLabel.destroy()
-    # #    except:
-    # #        a = 1
-    # #    self.UpdateTargetNameString()
-    # #    self.targetLabel = tk.Label(self, text=self.targetNameString.get())
-    # #    self.targetLabel.anchor = 'NW'
-    # #    self.targetLabel.place(x=80, y=340)
-
-    # def CreateLoadButton(self):
-    #     buttonLoadGithubString = "Load Firmware[Github]"
-    #     LoadGithubButton = ttk.Button(self, text=buttonLoadGithubString,
-    #                                   command=self.LoadGithubButtonCommand)
-    #     LoadGithubButton.anchor = 'NW'
-    #     LoadGithubButton.place(x=310, y=370)
-
-    #     buttonLoadLocalString = "Load Firmware[Local]"
-    #     reloadButton = ttk.Button(self, text=buttonLoadLocalString,
-    #                               command=self.LoadGithubButtonCommand)
-    #     reloadButton.anchor = 'NW'
-    #     reloadButton.place(x=460, y=370)
-
-    # def CreateFlashButton(self):
-    #     buttonFlashString = "Flash"
-    #     FlashButton = ttk.Button(self, text=buttonFlashString,
-    #                              command=self.LoadGithubButtonCommand)
-    #     FlashButton.anchor = 'NW'
-    #     FlashButton.place(x=610, y=370)
-
-    # def CreateDetectButton(self):
-    #     buttonDetectString = "Detect"
-    #     DetectButton = ttk.Button(self, text=buttonDetectString,
-    #                               command=self.DetectTargetButtonCommand)
-    #     DetectButton.anchor = 'NW'
-    #     DetectButton.place(x=110, y=370)
-
-    # def CreateDefineTargetButton(self):
-    #     buttonDefineTargetString = "Define Target"
-    #     DefineTargetButton = ttk.Button(self, text=buttonDefineTargetString,
-    #                                     command=self.LoadGithubButtonCommand)
-    #     DefineTargetButton.anchor = 'NW'
-    #     DefineTargetButton.place(x=630, y=692)
-
-    # def CreateLabel(self):
-    #     targetLabelString = "Target"
-    #     targetLabel = tk.Label(self, text=targetLabelString, bg="dimgray",
-    #                            fg="white", font=("Consolas", 15, "bold"))
-    #     targetLabel.anchor = 'NW'
-    #     targetLabel.place(x=110, y=10)
-
-    #     firmwareLabelString = "Firmware"
-    #     firmwareLabel = tk.Label(self, text=firmwareLabelString, bg="dimgray",
-    #                              fg="white", font=("Consolas", 15, "bold"))
-    #     firmwareLabel.anchor = 'NW'
-    #     firmwareLabel.place(x=460, y=10)
-
-    #     messageLabelString = "Message"
-    #     messageLabel = tk.Label(self, text=messageLabelString, bg="dimgray",
-    #                             fg="white", font=("Consolas", 15, "bold"))
-    #     messageLabel.anchor = 'NW'
-    #     messageLabel.place(x=10, y=410)
-
-    #     statusLabelString = "Status"
-    #     statusLabel = tk.Label(self, text=statusLabelString, bg="dimgray",
-    #                            fg="white", font=("Consolas", 10, "bold"))
-    #     statusLabel.anchor = 'NW'
-    #     statusLabel.place(x=5, y=695)
-
-    #     SelectedString = 'Selected'
-    #     SelectedLabel = tk.Label(self, text=SelectedString, bg="dimgray",
-    #                              fg="white", font=("Consolas", 10, "bold"))
-    #     SelectedLabel.anchor = 'NW'
-    #     SelectedLabel.place(x=320, y=340)
-
-    #     SelectedFirmwareLabel = tk.Label(
-    #         self, text=self.SelectedFirmwareString)
-    #     SelectedFirmwareLabel.anchor = 'NW'
-    #     SelectedFirmwareLabel.place(x=390, y=342)
-
 
 def UI_mainloop():
+    global my_gui
     root = tk.Tk()
     my_gui = MyGUI(root)
     my_gui.update_connection_state()
