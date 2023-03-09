@@ -41,6 +41,7 @@ class MyGUI:
 
         self.ver_index_select = 0
         self.vtx_index_select = 0
+        self.ver_name_select = ""
         self.vtx_name_select = ""
 
         self.create_root_window()
@@ -143,6 +144,7 @@ class MyGUI:
 
     def switch_version_callback(self, event):
         self.ver_index_select = self.ver_combobox.current()
+        self.ver_name_select = self.ver_combobox['value'][self.ver_index_select]
         self.target_combobox['value'] = Download.vtx_name_list[self.ver_index_select]
         self.target_combobox.current(0)
 
@@ -161,7 +163,7 @@ class MyGUI:
     def load_firmware_online_callback(event):
         global my_gui
         if my_gui.vtx_index_select != 0 and my_gui.ver_index_select != 0:
-            Download.downloadLink = firmware_link_list[my_gui.vtx_name_select]
+            Download.downloadLink = firmware_link_list[my_gui.ver_name_select][my_gui.vtx_name_select]
             Download.localTemp = "./Data/Temp/fw.zip"
             Download.downloadCommand = 2
             my_gui.downloadCommand = 2

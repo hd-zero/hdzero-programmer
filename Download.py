@@ -3,6 +3,7 @@ import time
 import wget
 import shutil
 import json
+import requests
 
 LocalRootPath = './Data/Github/'
 LocaLFirmwarePath = LocalRootPath+'firmware/'
@@ -44,7 +45,12 @@ def DetectLocalPath():
 def DownloadOnlineFile(OnlinePath, LocalPath):
     try:
         print('\nDBG:', 'Downloading ' + OnlinePath)
-        fname = wget.download(url=OnlinePath, out=LocalPath)
+        if 0:
+            fname = wget.download(url=OnlinePath, out=LocalPath)
+        else:
+            respose = requests.get(OnlinePath)
+            with open(LocalPath, "wb") as f:
+                f.write(respose.content)
         return 1
 
     except:
@@ -60,6 +66,7 @@ def ParseReleaseInfo():
         for i in range(len(data)):
             #parser version number
             version_list.append(data[i]['tag_name'])
+            firmware_link_list.update({data[i]['tag_name']:{}})
             
             # parser firmware link and target name
             link_list = []
@@ -72,7 +79,7 @@ def ParseReleaseInfo():
                 name_list.append(link_list[j][name_start:name_end])
 
             for j in range(1, len(name_list)):
-                firmware_link_list.update({name_list[j] : link_list[j - 1]})
+                firmware_link_list[data[i]['tag_name']].update({name_list[j] : link_list[j - 1]})
             vtx_name_list.append(name_list)
         
 
