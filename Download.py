@@ -81,28 +81,31 @@ def ParseReleaseInfo():
         print("something error")
 
 def ParseCommonInfo():
-    with open("./Data/Github/common", 'r') as file:
-        lines = file.readlines()
-        start = 0
-        id_list = []
-        for i in range(len(lines)):
-            if start == 1:
-                words = lines[i].split()
-                for j in range(len(words)):
-                    if words[j] == "defined":
-                        vtx_name_list[0].append(words[j+1].lower())
-                    if words[j] == "VTX_ID":
-                        if words[j+1] != "0x00":
-                            word = words[j+1].strip("0x")
-                            id_list.append(int(words[j+1].strip("0x"), 16))
-            if lines[i] == "/* define VTX ID start */\n":
-                start = 1
-            elif lines[i] == "/* define VTX ID end */\n":
-                start = 0
+    try:
+        with open("./Data/Github/common", 'r') as file:
+            lines = file.readlines()
+            start = 0
+            id_list = []
+            for i in range(len(lines)):
+                if start == 1:
+                    words = lines[i].split()
+                    for j in range(len(words)):
+                        if words[j] == "defined":
+                            vtx_name_list[0].append(words[j+1].lower())
+                        if words[j] == "VTX_ID":
+                            if words[j+1] != "0x00":
+                                word = words[j+1].strip("0x")
+                                id_list.append(int(words[j+1].strip("0x"), 16))
+                if lines[i] == "/* define VTX ID start */\n":
+                    start = 1
+                elif lines[i] == "/* define VTX ID end */\n":
+                    start = 0
 
-        for i in range(1, len(vtx_name_list[0])):
-            vtx_id_list.update({vtx_name_list[0][i]: id_list[i-1]})
-        vtx_name_list[0][1:] = sorted(vtx_name_list[0][1:])
+            for i in range(1, len(vtx_name_list[0])):
+                vtx_id_list.update({vtx_name_list[0][i]: id_list[i-1]})
+            vtx_name_list[0][1:] = sorted(vtx_name_list[0][1:])
+    except:
+        print("Cant't find common")
 
 def DownloadReleases():
     ret = 0
