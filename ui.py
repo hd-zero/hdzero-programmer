@@ -223,14 +223,6 @@ class MyGUI:
         global my_gui
         ch341.command = 2
         my_gui.ch341Command = 2
-        # my_gui.ver_combobox.current(0)
-        # my_gui.target_combobox.current(0)
-        # my_gui.auto_btn.config(state=tk.DISABLED)
-        # my_gui.target_combobox.config(state=tk.DISABLED)
-        # my_gui.ver_combobox.config(state=tk.DISABLED)
-        # my_gui.load_fw_online_btn.config(state=tk.DISABLED)
-        # my_gui.load_fw_local_btn.config(state=tk.DISABLED)
-        # my_gui.refresh_btn.config(state=tk.DISABLED)
 
     def create_update_button(self):
         self.update_btn = ttk.Button(
