@@ -57,6 +57,7 @@ class MyGUI:
         self.create_fw_state()
         self.create_prog_state()
         self.create_vtx_state()
+        self.create_progressbar()
 
     def create_root_window(self):
         titleString = "HDZero VTX Programmer"+" v"+version
@@ -231,6 +232,13 @@ class MyGUI:
         self.update_btn.place(width=70, height=24, x=340, y=100)
         self.update_btn.config(state=tk.DISABLED)
 
+    def create_progressbar(self):
+        self.progressbar = ttk.Progressbar(self.master, mode='determinate')
+        self.progressbar.anchor = 'NW'
+        self.progressbar['value'] = 0
+        self.progressbar.place(width=480, height=20, x=10, y=300)
+
+
     def update_connection_state(self):
         # init download online info
         if self.updateCnt == 1:
@@ -341,8 +349,12 @@ class MyGUI:
                         self.vtx_index_select = j
                 j += 1
             self.ch341Command = 0
-        elif self.ch341Command == 2 and ch341.command == 0:
-            self.ch341Command = 0
+        elif self.ch341Command == 2:
+            if ch341.command == 0:
+                self.progressbar['value'] = 100
+                self.ch341Command = 0
+            else:
+                self.progressbar['value'] = ch341.percent
 
 
         # download online firmware done
