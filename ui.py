@@ -95,6 +95,8 @@ class MyGUI:
         global my_gui
         ch341.command = 1
         my_gui.ch341Command = 1
+        my_gui.fw_state.config(text="FW:")
+        my_gui.fw_state.config(background="#a0a0a0")
 
     def create_auto_detect_btn(self):
         self.auto_btn = ttk.Button(
@@ -106,14 +108,15 @@ class MyGUI:
         global my_gui
         Download.downloadCommand = 1
         my_gui.downloadCommand = 1
-        my_gui.refresh_btn.config(state=tk.DISABLED)
-        my_gui.load_fw_online_btn.config(state=tk.DISABLED)
-        my_gui.load_fw_local_btn.config(state=tk.DISABLED)
-        my_gui.ver_combobox.config(state=tk.DISABLED)
-        my_gui.target_combobox.config(state=tk.DISABLED)
-        my_gui.update_btn.config(state=tk.DISABLED)
-        my_gui.auto_btn.config(state=tk.DISABLED)
-
+        my_gui.vtx_index_select = 0
+        my_gui.ver_index_select = 0
+        # my_gui.refresh_btn.config(state=tk.DISABLED)
+        # my_gui.load_fw_online_btn.config(state=tk.DISABLED)
+        # my_gui.load_fw_local_btn.config(state=tk.DISABLED)
+        # my_gui.ver_combobox.config(state=tk.DISABLED)
+        # my_gui.target_combobox.config(state=tk.DISABLED)
+        # my_gui.update_btn.config(state=tk.DISABLED)
+        # my_gui.auto_btn.config(state=tk.DISABLED)
 
     def create_refresh_btn(self):
         self.refresh_btn = ttk.Button(
@@ -147,6 +150,8 @@ class MyGUI:
         self.ver_name_select = self.ver_combobox['value'][self.ver_index_select]
         self.target_combobox['value'] = Download.vtx_name_list[self.ver_index_select]
         self.target_combobox.current(0)
+        self.fw_state.config(text="FW:")
+        self.fw_state.config(background="#a0a0a0")
 
     def switch_version_action(self):
         self.ver_combobox.bind("<<ComboboxSelected>>",
@@ -155,6 +160,8 @@ class MyGUI:
     def switch_vtx_callback(self, event):
         self.vtx_index_select = self.target_combobox.current()
         self.vtx_name_select = self.target_combobox['value'][self.vtx_index_select]
+        self.fw_state.config(text="FW:")
+        self.fw_state.config(background="#a0a0a0")
 
     def switch_target_action(self):
         self.target_combobox.bind(
@@ -169,14 +176,14 @@ class MyGUI:
             my_gui.downloadCommand = 2
             my_gui.fw_state.config(text="FW:")
             my_gui.fw_state.config(background="#a0a0a0")
-            
-            my_gui.refresh_btn.config(state=tk.DISABLED)
-            my_gui.load_fw_online_btn.config(state=tk.DISABLED)
-            my_gui.load_fw_local_btn.config(state=tk.DISABLED)
-            my_gui.ver_combobox.config(state=tk.DISABLED)
-            my_gui.target_combobox.config(state=tk.DISABLED)
-            my_gui.update_btn.config(state=tk.DISABLED)
-            my_gui.auto_btn.config(state=tk.DISABLED)
+
+            # my_gui.refresh_btn.config(state=tk.DISABLED)
+            # my_gui.load_fw_online_btn.config(state=tk.DISABLED)
+            # my_gui.load_fw_local_btn.config(state=tk.DISABLED)
+            # my_gui.ver_combobox.config(state=tk.DISABLED)
+            # my_gui.target_combobox.config(state=tk.DISABLED)
+            # my_gui.update_btn.config(state=tk.DISABLED)
+            # my_gui.auto_btn.config(state=tk.DISABLED)
 
         else:
             print()
@@ -187,6 +194,7 @@ class MyGUI:
             self.master, text='Load Firmawre(Online)', command=self.load_firmware_online_callback)
         self.load_fw_online_btn.anchor = 'NW'
         self.load_fw_online_btn.place(width=150, height=24, x=20, y=100)
+        # self.load_fw_online_btn.config(state=tk.DISABLED)
 
     def load_firmware_local_callback(event):
         global my_gui
@@ -211,22 +219,21 @@ class MyGUI:
         global my_gui
         ch341.command = 2
         my_gui.ch341Command = 2
-        my_gui.auto_btn.config(state=tk.DISABLED)
-        my_gui.target_combobox.config(state=tk.DISABLED)
-        my_gui.target_combobox.current(0)
-        my_gui.ver_combobox.config(state=tk.DISABLED)
-        my_gui.ver_combobox.current(0)
-        my_gui.load_fw_online_btn.config(state=tk.DISABLED)
-        my_gui.load_fw_local_btn.config(state=tk.DISABLED)
-        my_gui.refresh_btn.config(state=tk.DISABLED)
-
+        # my_gui.ver_combobox.current(0)
+        # my_gui.target_combobox.current(0)
+        # my_gui.auto_btn.config(state=tk.DISABLED)
+        # my_gui.target_combobox.config(state=tk.DISABLED)
+        # my_gui.ver_combobox.config(state=tk.DISABLED)
+        # my_gui.load_fw_online_btn.config(state=tk.DISABLED)
+        # my_gui.load_fw_local_btn.config(state=tk.DISABLED)
+        # my_gui.refresh_btn.config(state=tk.DISABLED)
 
     def create_update_button(self):
         self.update_btn = ttk.Button(
             self.master, text='Update', command=self.update_callback)
         self.update_btn.anchor = 'NW'
         self.update_btn.place(width=70, height=24, x=340, y=100)
-
+        self.update_btn.config(state=tk.DISABLED)
 
     def update_connection_state(self):
         # init download online info
@@ -237,30 +244,72 @@ class MyGUI:
             self.target_combobox['value'] = Download.vtx_name_list[0]
             self.target_combobox.current(0)
 
-        # ver combobox
+        # update ver_combobox status
         if self.downloadCommand != 0:
             self.ver_combobox.config(state=tk.DISABLED)
         elif self.ch341Command != 0:
             self.ver_combobox.config(state=tk.DISABLED)
-        elif ch341.dev_connected == 0 or ch341.flash_connected == 0:
-            self.ver_combobox.config(state=tk.DISABLED)
-        else:
+        elif ch341.dev_connected == 1 and ch341.flash_connected == 1:
             self.ver_combobox.config(state="readonly")
+        else:
+            self.ver_combobox.config(state=tk.DISABLED)
 
+        # update target_combobox status
+        if self.downloadCommand != 0:
+            self.target_combobox.config(state=tk.DISABLED)
+        elif self.ch341Command != 0:
+            self.target_combobox.config(state=tk.DISABLED)
+        elif ch341.dev_connected == 1 and ch341.flash_connected == 1:
+            self.target_combobox.config(state="readonly")
+        else:
+            self.target_combobox.config(state=tk.DISABLED)
+
+        # update load_fw_online_btn status
+        if self.downloadCommand != 0:
+            self.load_fw_online_btn.config(state=tk.DISABLED)
+        elif self.ch341Command != 0:
+            self.load_fw_online_btn.config(state=tk.DISABLED)
+        elif self.vtx_index_select != 0 and self.ver_index_select != 0:
+            self.load_fw_online_btn.config(state=tk.NORMAL)
+        else:
+            self.load_fw_online_btn.config(state=tk.DISABLED)
+
+        # update load_fw_local_btn status
+        if self.downloadCommand != 0:
+            self.load_fw_local_btn.config(state=tk.DISABLED)
+        elif self.ch341Command != 0:
+            self.load_fw_local_btn.config(state=tk.DISABLED)
+        elif self.vtx_index_select != 0 and self.ver_index_select != 0:
+            self.load_fw_local_btn.config(state=tk.NORMAL)
+        else:
+            self.load_fw_local_btn.config(state=tk.DISABLED)
+
+        # update refresh_btn status
+        if self.downloadCommand != 0:
+            self.refresh_btn.config(state=tk.DISABLED)
+        elif self.ch341Command != 0:
+            self.refresh_btn.config(state=tk.DISABLED)
+        elif ch341.dev_connected == 1 and ch341.flash_connected == 1:
+            self.refresh_btn.config(state=tk.NORMAL)
+        else:
+            self.refresh_btn.config(state=tk.DISABLED)
+
+        # update auto_btn status
+        if self.downloadCommand != 0:
+            self.auto_btn.config(state=tk.DISABLED)
+        elif self.ch341Command != 0:
+            self.auto_btn.config(state=tk.DISABLED)
+        elif ch341.dev_connected == 1 and ch341.flash_connected == 1:
+            self.auto_btn.config(state=tk.NORMAL)
+        else:
+            self.auto_btn.config(state=tk.DISABLED)
 
         if self.downloadCommand == 1 and Download.downloadCommand == 0:
             self.ver_combobox['value'] = Download.version_list
             self.ver_combobox.current(0)
-
             self.target_combobox['value'] = Download.vtx_name_list[0]
             self.target_combobox.current(0)
-            self.target_combobox.config(state="readonly")
-            self.auto_btn.config(state=tk.NORMAL)
-            self.load_fw_online_btn.config(state=tk.NORMAL)
-            self.load_fw_local_btn.config(state=tk.NORMAL)
-            self.refresh_btn.config(state=tk.NORMAL)
             self.downloadCommand = 0
-
 
         if ch341.dev_connected == 0:
             self.prog_state.config(background="#a0a0a0")
@@ -272,21 +321,28 @@ class MyGUI:
         elif ch341.dev_connected == 1:
             self.vtx_state.config(background="#42a459")
 
-        if self.ch341Command != 2 and self.ch341Command != 3 and self.downloadCommand != 1 and self.downloadCommand != 2:
-            if ch341.flash_connected == 1 and ch341.dev_connected == 1:
-                self.auto_btn.config(state=tk.NORMAL)
-                self.target_combobox.config(state="readonly")
-                self.load_fw_online_btn.config(state=tk.NORMAL)
-                self.load_fw_local_btn.config(state=tk.NORMAL)
-                self.refresh_btn.config(state=tk.NORMAL)
-            else:
-                self.auto_btn.config(state=tk.DISABLED)
-                self.target_combobox.config(state=tk.DISABLED)
-                self.target_combobox.current(0)
-                self.ver_combobox.current(0)
-                self.load_fw_online_btn.config(state=tk.DISABLED)
-                self.load_fw_local_btn.config(state=tk.DISABLED)
-                self.refresh_btn.config(state=tk.DISABLED)
+
+        if ch341.flash_connected == 1 and ch341.dev_connected == 1:
+            a = 1
+        else:
+            self.target_combobox.current(0)
+            self.ver_combobox.current(0)
+            self.fw_state.config(text="FW:")
+            self.fw_state.config(background="#a0a0a0")
+
+        # if self.ch341Command != 2 and self.ch341Command != 3 and self.downloadCommand != 1 and self.downloadCommand != 2:
+        #     if ch341.flash_connected == 1 and ch341.dev_connected == 1:
+        #         a = 1
+        #         # self.auto_btn.config(state=tk.NORMAL)
+        #         # self.target_combobox.config(state="readonly")
+        #         # self.refresh_btn.config(state=tk.NORMAL)
+        #     else:
+        #         # self.auto_btn.config(state=tk.DISABLED)
+        #         # self.target_combobox.config(state=tk.DISABLED)
+        #         self.target_combobox.current(0)
+        #         self.ver_combobox.current(0)
+        #         # self.refresh_btn.config(state=tk.DISABLED)
+        #         a = 1
 
         # check vtx id done
         if self.ch341Command == 1 and ch341.command == 0:
@@ -304,27 +360,25 @@ class MyGUI:
 
         # download online firmware done
         if self.downloadCommand == 2 and Download.downloadCommand == 0:
-            # print()
-            # print("download done, unziping...")
             zfile = zipfile.ZipFile(Download.localTemp, 'r')
             for filename in zfile.namelist():
                 data = zfile.read(filename)
                 file = open("./Data/Temp/"+filename, 'w+b')
                 file.write(data)
                 file.close()
-            # print("unzip done")
-            self.downloadCommand = 0
             ch341.fw_path = "./Data/Temp/"+filename
             self.fw_state.config(text="FW:Online")
             self.fw_state.config(background="#42a459")
-        
+            self.downloadCommand = 0
+
         if self.ch341Command != 2:
-            if self.fw_state.cget('text') =="FW:":
+            if self.fw_state.cget('text') == "FW:":
                 self.update_btn.config(state=tk.DISABLED)
             else:
                 self.update_btn.config(state=tk.NORMAL)
 
-        self.updateCnt += 1
+        if self.updateCnt < 10:
+            self.updateCnt += 1
         self.master.after(100, self.update_connection_state)
 
 
