@@ -308,6 +308,9 @@ class MyGUI:
         else:
             self.auto_btn.config(state=tk.DISABLED)
 
+        if self.ch341Command != 0:
+            self.update_btn.config(state=tk.DISABLED)
+
         if self.downloadCommand == 1 and Download.downloadCommand == 0:
             self.ver_combobox['value'] = Download.version_list
             self.ver_combobox.current(0)
@@ -346,6 +349,9 @@ class MyGUI:
                         self.vtx_index_select = j
                 j += 1
             self.ch341Command = 0
+        elif self.ch341Command == 2 and ch341.command == 0:
+            self.ch341Command = 0
+
 
         # download online firmware done
         if self.downloadCommand == 2 and Download.downloadCommand == 0:
