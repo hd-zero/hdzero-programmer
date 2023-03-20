@@ -91,12 +91,15 @@ class MyGUI:
         self.target_combobox['value'] = Download.vtx_name_list[0]
         self.target_combobox.current(0)
 
+    def reset_fw_state(self):
+        self.fw_state.config(text="FW:")
+        self.fw_state.config(background="#a0a0a0")
+
     def auto_detect_btn_callback(event):
         global my_gui
         ch341.command = 1
         my_gui.ch341Command = 1
-        my_gui.fw_state.config(text="FW:")
-        my_gui.fw_state.config(background="#a0a0a0")
+        my_gui.reset_fw_state()
 
     def create_auto_detect_btn(self):
         self.auto_btn = ttk.Button(
@@ -150,8 +153,7 @@ class MyGUI:
         self.ver_name_select = self.ver_combobox['value'][self.ver_index_select]
         self.target_combobox['value'] = Download.vtx_name_list[self.ver_index_select]
         self.target_combobox.current(0)
-        self.fw_state.config(text="FW:")
-        self.fw_state.config(background="#a0a0a0")
+        self.reset_fw_state()
 
     def switch_version_action(self):
         self.ver_combobox.bind("<<ComboboxSelected>>",
@@ -160,8 +162,7 @@ class MyGUI:
     def switch_vtx_callback(self, event):
         self.vtx_index_select = self.target_combobox.current()
         self.vtx_name_select = self.target_combobox['value'][self.vtx_index_select]
-        self.fw_state.config(text="FW:")
-        self.fw_state.config(background="#a0a0a0")
+        self.reset_fw_state()
 
     def switch_target_action(self):
         self.target_combobox.bind(
@@ -174,8 +175,7 @@ class MyGUI:
             Download.localTemp = "./Data/Temp/fw.zip"
             Download.downloadCommand = 2
             my_gui.downloadCommand = 2
-            my_gui.fw_state.config(text="FW:")
-            my_gui.fw_state.config(background="#a0a0a0")
+            my_gui.reset_fw_state()
 
             # my_gui.refresh_btn.config(state=tk.DISABLED)
             # my_gui.load_fw_online_btn.config(state=tk.DISABLED)
@@ -199,15 +199,19 @@ class MyGUI:
     def load_firmware_local_callback(event):
         global my_gui
         selected_file_path = filedialog.askopenfilename()
-        if os.path.getsize(selected_file_path) <= 65536:
-            ch341.fw_path = selected_file_path
-            my_gui.fw_state.config(text="FW:Local")
-            my_gui.fw_state.config(background="#42a459")
-        else:
-            print()
-            print("local firmware error")
-            my_gui.fw_state.config(text="FW:")
-            my_gui.fw_state.config(background="#a0a0a0")
+        try:
+            if os.path.getsize(selected_file_path) <= 65536:
+                ch341.fw_path = selected_file_path
+                my_gui.fw_state.config(text="FW:Local")
+                my_gui.fw_state.config(background="#42a459")
+            else:
+                print()
+                print("local firmware error")
+                my_gui.reset_fw_state()
+        except:
+                print()
+                print("local firmware error")
+                my_gui.reset_fw_state()
 
     def create_load_firmnware_local_btn(self):
         self.load_fw_local_btn = ttk.Button(
@@ -279,7 +283,7 @@ class MyGUI:
             self.load_fw_local_btn.config(state=tk.DISABLED)
         elif self.ch341Command != 0:
             self.load_fw_local_btn.config(state=tk.DISABLED)
-        elif self.vtx_index_select != 0 and self.ver_index_select != 0:
+        elif self.vtx_index_select != 0:
             self.load_fw_local_btn.config(state=tk.NORMAL)
         else:
             self.load_fw_local_btn.config(state=tk.DISABLED)
@@ -327,22 +331,7 @@ class MyGUI:
         else:
             self.target_combobox.current(0)
             self.ver_combobox.current(0)
-            self.fw_state.config(text="FW:")
-            self.fw_state.config(background="#a0a0a0")
-
-        # if self.ch341Command != 2 and self.ch341Command != 3 and self.downloadCommand != 1 and self.downloadCommand != 2:
-        #     if ch341.flash_connected == 1 and ch341.dev_connected == 1:
-        #         a = 1
-        #         # self.auto_btn.config(state=tk.NORMAL)
-        #         # self.target_combobox.config(state="readonly")
-        #         # self.refresh_btn.config(state=tk.NORMAL)
-        #     else:
-        #         # self.auto_btn.config(state=tk.DISABLED)
-        #         # self.target_combobox.config(state=tk.DISABLED)
-        #         self.target_combobox.current(0)
-        #         self.ver_combobox.current(0)
-        #         # self.refresh_btn.config(state=tk.DISABLED)
-        #         a = 1
+            self.reset_fw_state()
 
         # check vtx id done
         if self.ch341Command == 1 and ch341.command == 0:
