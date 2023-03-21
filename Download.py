@@ -25,6 +25,7 @@ version_list = ["Choose a Version"]
 vtx_name_list = [["Choose a VTX"]]
 vtx_id_list = {}
 user_vtx_id = 0xff
+success = 0
 
 
 def DetectLocalPath():
@@ -143,7 +144,8 @@ def DownloadThreadProc():
     global vtx_name_list
     global vtx_id_list
     global user_vtx_id
-    
+    global success
+
     ParseReleaseInfo()
     ParseCommonInfo()
     while True:
@@ -156,10 +158,16 @@ def DownloadThreadProc():
                 user_vtx_id = 0xff
                 ParseReleaseInfo()
                 ParseCommonInfo()
+                success = 1
+            else:
+                success = 0
             downloadCommand = 0
         elif downloadCommand == 2:
             if os.path.exists(localTemp):
                 os.remove(localTemp)
-            DownloadOnlineFile(downloadLink, localTemp)
+            if DownloadOnlineFile(downloadLink, localTemp):
+                success = 1
+            else:
+                success = 0
             downloadCommand = 0
         time.sleep(0.01)

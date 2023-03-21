@@ -132,6 +132,8 @@ def flash_write_page(ch341, baseAddress, len, firmware):
     ch341.stream_spi4()
     ch341.set_stream(1)
 
+def flash_write_target(target):
+    a = 1
 
 def flash_write_file(ch341):
     f = open(ch341.fw_path, "rb")

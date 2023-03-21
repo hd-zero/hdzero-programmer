@@ -238,6 +238,23 @@ class MyGUI:
         self.progressbar['value'] = 0
         self.progressbar.place(width=480, height=20, x=10, y=300)
 
+    def ok_callback(self):
+        self.window.destroy()
+        self.window.grab_release()
+
+    def create_window(self, string):
+        windowX = 300
+        windowY = 100
+        offsetX = (self.master.winfo_screenwidth() - windowX)/2
+        offsetY = (self.master.winfo_screenheight() - windowY)/2
+        self.window = tk.Toplevel()
+        self.window.geometry('%dx%d+%d+%d' %(windowX, windowY, offsetX, offsetY))
+        self.window.title(" ")
+        label = tk.Label(self.window, text=string)
+        label.pack(padx=10, pady=10)
+        button=tk.Button(self.window, text="ok", command=self.ok_callback)
+        button.pack(padx=10,pady=10)
+        self.window.grab_set()
 
     def update_connection_state(self):
         # init download online info
@@ -308,7 +325,7 @@ class MyGUI:
         else:
             self.auto_btn.config(state=tk.DISABLED)
 
-        if self.ch341Command != 0:
+        if self.ch341Command != 0 or self.downloadCommand != 0:
             self.update_btn.config(state=tk.DISABLED)
 
         if self.downloadCommand == 1 and Download.downloadCommand == 0:
@@ -317,6 +334,10 @@ class MyGUI:
             self.target_combobox['value'] = Download.vtx_name_list[0]
             self.target_combobox.current(0)
             self.downloadCommand = 0
+            if Download.success == 1:
+                self.create_window("Refresh success")
+            else:
+                self.create_window("Refresh failed")
 
         if ch341.dev_connected == 0:
             self.prog_state.config(background="#a0a0a0")
@@ -333,6 +354,8 @@ class MyGUI:
             a = 1
         else:
             self.target_combobox.current(0)
+            self.vtx_index_select = 0
+            self.ver_index_select = 0
             self.ver_combobox.current(0)
             self.reset_fw_state()
 
@@ -351,8 +374,13 @@ class MyGUI:
             self.ch341Command = 0
         elif self.ch341Command == 2:
             if ch341.command == 0:
+                # update done
                 self.progressbar['value'] = 100
                 self.ch341Command = 0
+                if Download.success == 1:
+                    self.create_window("Update success")
+                else:
+                    self.create_window("Update failed")
             else:
                 self.progressbar['value'] = ch341.percent
 
@@ -369,6 +397,10 @@ class MyGUI:
             self.fw_state.config(text="FW:Online")
             self.fw_state.config(background="#42a459")
             self.downloadCommand = 0
+            if Download.success == 1:
+                self.create_window("Load firmware(online) success")
+            else:
+                self.create_window("Load firmware(online) failed")
 
         if self.ch341Command != 2:
             if self.fw_state.cget('text') == "FW:":
