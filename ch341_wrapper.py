@@ -22,6 +22,7 @@ class ch341_class(object):
         self.update_state = 0
         self.percent = 0
         self.write_crc = 0
+        self.read_crc = 0
         self.success = 0
 
         try:
@@ -129,9 +130,12 @@ def ch341ThreadProc():
             ch341.update_state = 2
             flash_write_target(ch341, [ch341.vtx_id])
             flash_write_file(ch341)
-            print("write crc:", ch341.write_crc)
+            flash_read_file(ch341)
             ch341.update_state = 3
-            ch341.success = 1
+            if ch341.write_crc == ch341.read_crc:
+                ch341.success = 1
+            else:
+                ch341.success = 0
             ch341.command = 0
         else:
             ch341.update_state = 0

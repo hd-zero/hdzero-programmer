@@ -1,6 +1,7 @@
 import time
 from Download import *
 
+pageNum = 0
 
 class flash_class(object):
     def __init__(self):
@@ -155,6 +156,7 @@ def flash_write_page(ch341, baseAddress, len, firmware):
     ch341.set_stream(1)
 
 def flash_write_file(ch341):
+    global pageNum
     f = open(ch341.fw_path, "rb")
     firmware = f.read()
     pageNum = (ch341.fw_full_size + (1 << 8) - 1) >> 8
@@ -163,7 +165,7 @@ def flash_write_file(ch341):
     ch341.write_crc = 0
 
     for page in range(pageNum):
-        ch341.percent = int(page * 100 / pageNum) + 1
+        ch341.percent = int(page * 100 / pageNum)/2 + 1
         print(ch341.percent)
 
         baseAddress = page << 8
@@ -172,3 +174,30 @@ def flash_write_file(ch341):
         flash_write_page(ch341, baseAddress, 256, firmware[baseAddress:])
         flash_write_disable(ch341)
         flash_wait_busy(ch341)
+
+def flash_read_file(ch341):
+    global pageNum
+
+    ch341.precent = 50
+    ch341.read_crc = 0
+
+    for page in range(pageNum):
+        ch341.percent = 50 + int(page * 100 / pageNum)/2 + 1
+        print(ch341.percent)
+
+        baseAddress = page << 8
+
+        ch341.iobuffer[0] = 0x03
+        ch341.iobuffer[1] = (baseAddress >> 16) & 0xff
+        ch341.iobuffer[2] = (baseAddress >> 8) & 0xff
+        ch341.iobuffer[3] = baseAddress & 0xff
+        ch341.iobuffer[4] = 0x00
+        ch341.ilength = 260
+        ch341.set_stream(0)
+        ch341.stream_spi4()
+        ch341.set_stream(1)
+
+        for i in range(0, 256):
+            ch341.read_crc += int.from_bytes(
+                ch341.iobuffer[4 + i], byteorder='big')
+            ch341.read_crc &= 0xffff
