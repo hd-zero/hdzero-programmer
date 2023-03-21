@@ -137,6 +137,8 @@ def ch341ThreadProc():
             else:
                 ch341.success = 0
             ch341.command = 0
+        elif ch341.command == 255:
+            sys.exit()
         else:
             ch341.update_state = 0
 

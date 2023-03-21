@@ -4,6 +4,7 @@ import wget
 import shutil
 import json
 import requests
+import sys
 
 LocalRootPath = './Data/Github/'
 LocaLFirmwarePath = LocalRootPath+'firmware/'
@@ -172,4 +173,6 @@ def DownloadThreadProc():
             else:
                 success = 0
             downloadCommand = 0
+        elif downloadCommand == 255:
+            sys.exit()
         time.sleep(0.01)

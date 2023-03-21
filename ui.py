@@ -5,6 +5,7 @@ from tkinter import HORIZONTAL, VERTICAL, ttk, StringVar
 from tkinter import filedialog
 import Download
 from ch341_wrapper import *
+import sys
 
 from icon32 import icon32
 import base64
@@ -76,6 +77,7 @@ class MyGUI:
         icon = tk.PhotoImage(data=icon_bytes.getvalue())
 
         self.master.iconphoto(True, icon)
+
 
     def create_version_combobox(self):
         self.ver_combobox = ttk.Combobox(self.master, state='readonly')
@@ -418,9 +420,16 @@ class MyGUI:
         self.master.after(100, self.update_connection_state)
 
 
+def on_closing():
+    global my_gui
+    ch341.command = 255
+    Download.downloadCommand = 255
+    sys.exit()
+
 def UI_mainloop():
     global my_gui
     root = tk.Tk()
     my_gui = MyGUI(root)
     my_gui.update_connection_state()
+    root.protocol("WM_DELETE_WINDOW", on_closing)
     my_gui.master.mainloop()
