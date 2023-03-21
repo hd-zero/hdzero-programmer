@@ -45,7 +45,7 @@ def DetectLocalPath():
 
 def DownloadOnlineFile(OnlinePath, LocalPath):
     try:
-        print('\nDBG:', 'Downloading ' + OnlinePath)
+        # print('\nDBG:', 'Downloading ' + OnlinePath)
         if 0:
             fname = wget.download(url=OnlinePath, out=LocalPath)
         else:
@@ -55,7 +55,7 @@ def DownloadOnlineFile(OnlinePath, LocalPath):
         return 1
 
     except:
-        print('\r\nDBG:Download Failed. Please check if the network is connected.')
+        # print('\r\nDBG:Download Failed. Please check if the network is connected.')
         return 0
 
 
@@ -63,7 +63,7 @@ def ParseReleaseInfo():
     try:
         with open('./Data/Github/releases.json') as f:
             data = json.load(f)
-        print()
+        # print()
         for i in range(len(data)):
             #parser version number
             version_list.append(data[i]['tag_name'])
@@ -85,8 +85,9 @@ def ParseReleaseInfo():
         
 
     except:
-        print()
-        print("something error")
+        a = 1
+        # print()
+        # print("something error")
 
 def ParseCommonInfo():
     try:
@@ -113,7 +114,8 @@ def ParseCommonInfo():
                 vtx_id_list.update({vtx_name_list[0][i]: id_list[i-1]})
             vtx_name_list[0][1:] = sorted(vtx_name_list[0][1:])
     except:
-        print("Cant't find common")
+        a = 1
+        # print("Cant't find common")
 
 def DownloadReleases():
     ret = 0

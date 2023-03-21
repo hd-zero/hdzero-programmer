@@ -188,8 +188,9 @@ class MyGUI:
             # my_gui.auto_btn.config(state=tk.DISABLED)
 
         else:
-            print()
-            print("Version and VTX must be specified.")
+            a = 1
+            # print()
+            # print("Version and VTX must be specified.")
 
     def create_load_firmnware_online_btn(self):
         self.load_fw_online_btn = ttk.Button(
@@ -207,12 +208,12 @@ class MyGUI:
                 my_gui.fw_state.config(text="FW:Local")
                 my_gui.fw_state.config(background="#42a459")
             else:
-                print()
-                print("local firmware error")
+                # print()
+                # print("local firmware error")
                 my_gui.reset_fw_state()
         except:
-                print()
-                print("local firmware error")
+                # print()
+                # print("local firmware error")
                 my_gui.reset_fw_state()
 
     def create_load_firmnware_local_btn(self):
@@ -365,8 +366,8 @@ class MyGUI:
             j = 0
             for i in Download.vtx_id_list:
                 if vtx_id_list[i] == ch341.vtx_id:
-                    print()
-                    print("Current vtx is", i)
+                    # print()
+                    # print("Current vtx is", i)
                     for j in range(0,len(vtx_id_list) + 1):
                         if self.target_combobox['value'][j] == i:
                             self.target_combobox.current(j)

@@ -33,7 +33,7 @@ def flash_connect(ch341):
     while True:
         flash_id = flash_read_id(ch341)
         if flash_id == 0xEF13:
-            print("DBG: flash is found")
+            # print("DBG: flash is found")
             return
         else:
             time.sleep(0.2)
@@ -114,8 +114,8 @@ def flash_wait_busy(ch341):
 
 
 def flash_erase(ch341):
-    print()
-    print("erase flash")
+    # print()
+    # print("erase flash")
 
     flash_write_enable(ch341)
     flash_erase_block64(ch341)
@@ -166,7 +166,7 @@ def flash_write_file(ch341):
 
     for page in range(pageNum):
         ch341.percent = int(page * 100 / pageNum)/2 + 1
-        print(ch341.percent)
+        # print(ch341.percent)
 
         baseAddress = page << 8
 
@@ -183,7 +183,7 @@ def flash_read_file(ch341):
 
     for page in range(pageNum):
         ch341.percent = 50 + int(page * 100 / pageNum)/2 + 1
-        print(ch341.percent)
+        # print(ch341.percent)
 
         baseAddress = page << 8
 

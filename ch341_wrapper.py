@@ -28,7 +28,7 @@ class ch341_class(object):
         try:
             self.dll = cdll.LoadLibrary(self.dll_path)
         except:
-            print("Error: Can't find"+self.dll_path)
+            a = 1# print("Error: Can't find"+self.dll_path)
 
     def open_device(self, iIndex):
         return self.dll.CH341OpenDevice(iIndex)
@@ -58,16 +58,16 @@ class ch341_class(object):
         if self.dev_connected == 0:
             if self.open_device(0) > 0:
                 self.dev_connected = 1
-                print("DBG: ch341 is connected")
+                # print("DBG: ch341 is connected")
             #else:
             #    time.sleep(0.1)
         elif self.dev_connected == 1 and self.status == 0:
             if self.open_device(0) < 0:
                 self.dev_connected = 0
-                print("DBG: ch341 is disconnected")
+                # print("DBG: ch341 is disconnected")
                 if self.flash_connected == 1:
                     self.flash_connected = 0
-                    print("DBG: flash is disconnected")
+                    # print("DBG: flash is disconnected")
 
 def flash_read_id(ch341):
     ch341.iobuffer[0] = 0x90
@@ -94,7 +94,7 @@ def flash_connect(ch341):
         if ch341.flash_connected == 0:
             flash_id = flash_read_id(ch341)
             if flash_id == 0xEF13:
-                print("DBG: flash is connected")
+                # print("DBG: flash is connected")
                 ch341.flash_connected = 1
                 return
             else:
@@ -105,13 +105,13 @@ def flash_connect(ch341):
                 if flash_id == 0xEF13:
                     return
                 else:
-                    print("DBG: flash is disconnected")
+                    # print("DBG: flash is disconnected")
                     ch341.flash_connected = 0
 
 
 ch341 = ch341_class()
 def ch341ThreadProc():
-    print('start ch341ThreadProc')
+    # print('start ch341ThreadProc')
 
     while True:
         ch341.dev_connect()
