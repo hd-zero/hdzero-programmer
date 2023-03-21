@@ -163,6 +163,7 @@ class MyGUI:
     def switch_vtx_callback(self, event):
         self.vtx_index_select = self.target_combobox.current()
         self.vtx_name_select = self.target_combobox['value'][self.vtx_index_select]
+        ch341.vtx_id = Download.vtx_id_list[self.vtx_name_select]
         self.reset_fw_state()
 
     def switch_target_action(self):
@@ -366,18 +367,18 @@ class MyGUI:
                 if vtx_id_list[i] == ch341.vtx_id:
                     print()
                     print("Current vtx is", i)
-                    if self.target_combobox['value'][j] == i:
-                        self.target_combobox.current(j)
-                        self.vtx_name_select = i
-                        self.vtx_index_select = j
-                j += 1
+                    for j in range(0,len(vtx_id_list) + 1):
+                        if self.target_combobox['value'][j] == i:
+                            self.target_combobox.current(j)
+                            self.vtx_name_select = i
+                            self.vtx_index_select = j
             self.ch341Command = 0
         elif self.ch341Command == 2:
             if ch341.command == 0:
                 # update done
                 self.progressbar['value'] = 100
                 self.ch341Command = 0
-                if Download.success == 1:
+                if ch341.success == 1:
                     self.create_window("Update success")
                 else:
                     self.create_window("Update failed")
@@ -402,7 +403,10 @@ class MyGUI:
             else:
                 self.create_window("Load firmware(online) failed")
 
-        if self.ch341Command != 2:
+        # update update_btn status
+        if self.ch341Command != 0 or self.downloadCommand != 0:
+            self.update_btn.config(state=tk.DISABLED)
+        elif self.ch341Command != 2:
             if self.fw_state.cget('text') == "FW:":
                 self.update_btn.config(state=tk.DISABLED)
             else:

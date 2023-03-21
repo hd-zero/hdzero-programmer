@@ -81,6 +81,16 @@ def flash_erase_block64(ch341):
     ch341.stream_spi4()
     ch341.set_stream(1)
 
+def flash_earse_section(ch341, addr):
+    ch341.iobuffer[0] = 0x20
+    ch341.iobuffer[1] = (addr >> 16) & 0x1f
+    ch341.iobuffer[2] = (addr >> 8) & 0x1f
+    ch341.iobuffer[3] = (addr >> 0) & 0x1f
+    ch341.ilength = 4
+
+    ch341.set_stream(0)
+    ch341.stream_spi4()
+    ch341.set_stream(1)
 
 def flash_read_status(ch341):
     global flash_status_reg1
@@ -105,11 +115,23 @@ def flash_wait_busy(ch341):
 def flash_erase(ch341):
     print()
     print("erase flash")
+
     flash_write_enable(ch341)
     flash_erase_block64(ch341)
     flash_wait_busy(ch341)
     flash_write_disable(ch341)
 
+    flash_write_enable(ch341)
+    flash_earse_section(ch341, 65536)
+    flash_wait_busy(ch341)
+    flash_write_disable(ch341)
+
+def flash_write_target(ch341, target):
+    flash_write_enable(ch341)
+    flash_write_page(ch341, 65536, 1, target)
+    flash_write_disable(ch341)
+    flash_wait_busy(ch341)
+    
 
 def flash_write_page(ch341, baseAddress, len, firmware):
     ch341.iobuffer[0] = 0x02
@@ -131,9 +153,6 @@ def flash_write_page(ch341, baseAddress, len, firmware):
     ch341.set_stream(0)
     ch341.stream_spi4()
     ch341.set_stream(1)
-
-def flash_write_target(target):
-    a = 1
 
 def flash_write_file(ch341):
     f = open(ch341.fw_path, "rb")
