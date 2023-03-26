@@ -50,7 +50,7 @@ def DownloadOnlineFile(OnlinePath, LocalPath):
         if 0:
             fname = wget.download(url=OnlinePath, out=LocalPath)
         else:
-            respose = requests.get(OnlinePath)
+            respose = requests.get(OnlinePath, timeout=10)
             with open(LocalPath, "wb") as f:
                 f.write(respose.content)
         return 1
