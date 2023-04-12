@@ -13,7 +13,7 @@ import io
 
 import zipfile
 
-version = "0.1"
+version = "0.1.0"
 
 
 class MyGUI:
@@ -62,8 +62,8 @@ class MyGUI:
 
     def create_root_window(self):
         titleString = "HDZero VTX Programmer"+" v"+version
-        windowX = 640
-        windowY = 320
+        windowX = 450
+        windowY = 170
         offsetX = (self.master.winfo_screenwidth() - windowX)/2
         offsetY = (self.master.winfo_screenheight() - windowY)/2
         self.master.geometry('%dx%d+%d+%d' %
@@ -133,21 +133,21 @@ class MyGUI:
         self.fw_state = ttk.Label(
             self.master, text="FW:", border=1, relief='ridge')
         self.fw_state.anchor = 'NW'
-        self.fw_state.place(width=74, height=20, x=500, y=300)
+        self.fw_state.place(width=74, height=20, x=300, y=140)
         self.fw_state.config(background="#a0a0a0")
 
     def create_vtx_state(self):
         self.vtx_state = ttk.Label(
             self.master, text="VTX", border=1, relief='ridge')
         self.vtx_state.anchor = 'NW'
-        self.vtx_state.place(width=28, height=20, x=574, y=300)
+        self.vtx_state.place(width=28, height=20, x=374, y=140)
         self.vtx_state.config(background="#a0a0a0")
 
     def create_prog_state(self):
         self.prog_state = ttk.Label(
             self.master, text="PROG", border=1, relief='ridge')
         self.prog_state.anchor = 'NW'
-        self.prog_state.place(width=38, height=20, x=602, y=300)
+        self.prog_state.place(width=38, height=20, x=402, y=140)
         self.prog_state.config(background="#a0a0a0")
 
     def switch_version_callback(self, event):
@@ -174,7 +174,7 @@ class MyGUI:
     def load_firmware_online_callback(event):
         global my_gui
         if my_gui.vtx_index_select != 0 and my_gui.ver_index_select != 0:
-            Download.downloadLink = firmware_link_list[my_gui.ver_name_select][my_gui.vtx_name_select]
+            Download.downloadLink = Download.firmware_link_list[my_gui.ver_name_select][my_gui.vtx_name_select]
             Download.localTemp = "./Data/Temp/fw.zip"
             Download.downloadCommand = 2
             my_gui.downloadCommand = 2
@@ -239,7 +239,7 @@ class MyGUI:
         self.progressbar = ttk.Progressbar(self.master, mode='determinate')
         self.progressbar.anchor = 'NW'
         self.progressbar['value'] = 0
-        self.progressbar.place(width=480, height=20, x=10, y=300)
+        self.progressbar.place(width=280, height=20, x=10, y=140)
 
     def ok_callback(self):
         self.window.destroy()
@@ -259,6 +259,7 @@ class MyGUI:
         button = tk.Button(self.window, text="ok", command=self.ok_callback)
         button.pack(padx=10, pady=10)
         self.window.grab_set()
+        self.window.resizable(False, False)
 
     def update_connection_state(self):
         # init download online info
