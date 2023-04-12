@@ -3,6 +3,7 @@ import time
 from ctypes import *
 from flash import *
 
+
 class ch341_class(object):
 
     def __init__(self):
@@ -13,7 +14,7 @@ class ch341_class(object):
         self.ilength = 0
         self.iIndex = 0
         self.flash_connected = 0
-        self.status = 0 # 0:idle
+        self.status = 0  # 0:idle
         self.command = 0
         self.vtx_id = 0
         self.fw_path = ""
@@ -28,7 +29,7 @@ class ch341_class(object):
         try:
             self.dll = cdll.LoadLibrary(self.dll_path)
         except:
-            a = 1# print("Error: Can't find"+self.dll_path)
+            a = 1  # print("Error: Can't find"+self.dll_path)
 
     def open_device(self, iIndex):
         return self.dll.CH341OpenDevice(iIndex)
@@ -59,7 +60,7 @@ class ch341_class(object):
             if self.open_device(0) > 0:
                 self.dev_connected = 1
                 # print("DBG: ch341 is connected")
-            #else:
+            # else:
             #    time.sleep(0.1)
         elif self.dev_connected == 1 and self.status == 0:
             if self.open_device(0) < 0:
@@ -68,6 +69,7 @@ class ch341_class(object):
                 if self.flash_connected == 1:
                     self.flash_connected = 0
                     # print("DBG: flash is disconnected")
+
 
 def flash_read_id(ch341):
     ch341.iobuffer[0] = 0x90
@@ -83,13 +85,13 @@ def flash_read_id(ch341):
     ch341.set_stream(1)
 
     return int.from_bytes(ch341.iobuffer[4], byteorder='big') * 256 \
-            + int.from_bytes(ch341.iobuffer[5], byteorder='big')
+        + int.from_bytes(ch341.iobuffer[5], byteorder='big')
 
 
 def flash_connect(ch341):
     if ch341.dev_connected == 0:
         ch341.flash_connected = 0
-        return;
+        return
     else:
         if ch341.flash_connected == 0:
             flash_id = flash_read_id(ch341)
@@ -110,6 +112,8 @@ def flash_connect(ch341):
 
 
 ch341 = ch341_class()
+
+
 def ch341ThreadProc():
     # print('start ch341ThreadProc')
 

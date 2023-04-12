@@ -66,10 +66,10 @@ def ParseReleaseInfo():
             data = json.load(f)
         # print()
         for i in range(len(data)):
-            #parser version number
+            # parser version number
             version_list.append(data[i]['tag_name'])
-            firmware_link_list.update({data[i]['tag_name']:{}})
-            
+            firmware_link_list.update({data[i]['tag_name']: {}})
+
             # parser firmware link and target name
             link_list = []
             name_list = []
@@ -81,14 +81,15 @@ def ParseReleaseInfo():
                 name_list.append(link_list[j][name_start:name_end])
 
             for j in range(1, len(name_list)):
-                firmware_link_list[data[i]['tag_name']].update({name_list[j] : link_list[j - 1]})
+                firmware_link_list[data[i]['tag_name']].update(
+                    {name_list[j]: link_list[j - 1]})
             vtx_name_list.append(name_list)
-        
 
     except:
         a = 1
         # print()
         # print("something error")
+
 
 def ParseCommonInfo():
     try:
@@ -118,6 +119,7 @@ def ParseCommonInfo():
         a = 1
         # print("Cant't find common")
 
+
 def DownloadReleases():
     ret = 0
     DetectLocalPath()
@@ -129,6 +131,7 @@ def DownloadReleases():
         os.remove("./Data/Temp/releases.json")
     return ret
 
+
 def DownloadCommon():
     ret = 0
     DetectLocalPath()
@@ -139,6 +142,7 @@ def DownloadCommon():
     if os.path.exists("./Data/Temp/common"):
         os.remove("./Data/Temp/common")
     return ret
+
 
 def DownloadThreadProc():
     global downloadCommand

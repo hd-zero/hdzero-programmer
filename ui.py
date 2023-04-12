@@ -78,7 +78,6 @@ class MyGUI:
 
         self.master.iconphoto(True, icon)
 
-
     def create_version_combobox(self):
         self.ver_combobox = ttk.Combobox(self.master, state='readonly')
         self.ver_combobox.anchor = 'NW'
@@ -214,9 +213,9 @@ class MyGUI:
                 # print("local firmware error")
                 my_gui.reset_fw_state()
         except:
-                # print()
-                # print("local firmware error")
-                my_gui.reset_fw_state()
+            # print()
+            # print("local firmware error")
+            my_gui.reset_fw_state()
 
     def create_load_firmnware_local_btn(self):
         self.load_fw_local_btn = ttk.Button(
@@ -252,12 +251,13 @@ class MyGUI:
         offsetX = (self.master.winfo_screenwidth() - windowX)/2
         offsetY = (self.master.winfo_screenheight() - windowY)/2
         self.window = tk.Toplevel()
-        self.window.geometry('%dx%d+%d+%d' %(windowX, windowY, offsetX, offsetY))
+        self.window.geometry('%dx%d+%d+%d' %
+                             (windowX, windowY, offsetX, offsetY))
         self.window.title(" ")
         label = tk.Label(self.window, text=string)
         label.pack(padx=10, pady=10)
-        button=tk.Button(self.window, text="ok", command=self.ok_callback)
-        button.pack(padx=10,pady=10)
+        button = tk.Button(self.window, text="ok", command=self.ok_callback)
+        button.pack(padx=10, pady=10)
         self.window.grab_set()
 
     def update_connection_state(self):
@@ -353,7 +353,6 @@ class MyGUI:
         elif ch341.dev_connected == 1:
             self.vtx_state.config(background="#42a459")
 
-
         if ch341.flash_connected == 1 and ch341.dev_connected == 1:
             a = 1
         else:
@@ -370,7 +369,7 @@ class MyGUI:
                 if vtx_id_list[i] == ch341.vtx_id:
                     # print()
                     # print("Current vtx is", i)
-                    for j in range(0,len(vtx_id_list) + 1):
+                    for j in range(0, len(vtx_id_list) + 1):
                         if self.target_combobox['value'][j] == i:
                             self.target_combobox.current(j)
                             self.vtx_name_select = i
@@ -387,7 +386,6 @@ class MyGUI:
                     self.create_window("Update failed")
             else:
                 self.progressbar['value'] = ch341.percent
-
 
         # download online firmware done
         if self.downloadCommand == 2 and Download.downloadCommand == 0:
@@ -425,6 +423,7 @@ def on_closing():
     ch341.command = 255
     Download.downloadCommand = 255
     sys.exit()
+
 
 def UI_mainloop():
     global my_gui
