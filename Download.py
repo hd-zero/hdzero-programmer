@@ -7,16 +7,7 @@ import requests
 import sys
 
 LocalRootPath = './Data/Github/'
-LocaLFirmwarePath = LocalRootPath+'firmware/'
-LocalTargetInfoPath = LocalRootPath+'Target_Info/'
 LocaLTempPath = './Data/Temp/'
-LocalTargetListString = LocalRootPath + 'TargetList'
-LocalHDZeroString = LocalRootPath + 'HDZero.png'
-
-WebRootPath = 'https://raw.githubusercontent.com/ligenxxxx/HDZeroFirmware/main/'
-WebTargetListString = WebRootPath + 'TargetList'
-WebHDZeroString = WebRootPath + 'HDZero.png'
-
 
 downloadLink = ""
 localTemp = ""
@@ -32,16 +23,8 @@ success = 0
 def DetectLocalPath():
     if not os.path.exists(LocalRootPath):
         os.makedirs(LocalRootPath)
-    if not os.path.exists(LocaLFirmwarePath):
-        os.makedirs(LocaLFirmwarePath)
     if not os.path.exists(LocaLTempPath):
         os.makedirs(LocaLTempPath)
-    if not os.path.exists(LocalTargetInfoPath):
-        os.makedirs(LocalTargetInfoPath)
-    if not os.path.exists(LocalTargetListString):
-        f = open(LocalTargetListString, "w")
-        f.write("0")
-        f.close()
 
 
 def DownloadOnlineFile(OnlinePath, LocalPath):
