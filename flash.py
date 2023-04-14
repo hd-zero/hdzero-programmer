@@ -33,7 +33,7 @@ def flash_read_id(ch341):
 def flash_connect(ch341):
     while True:
         flash_id = flash_read_id(ch341)
-        if flash_id == 0xEF13:
+        if flash_id == 0xEF13 or flash_id == 0x5E13:
             # print("DBG: flash is found")
             return
         else:
