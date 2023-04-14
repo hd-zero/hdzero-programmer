@@ -104,7 +104,7 @@ def flash_connect(ch341):
         elif ch341.flash_connected == 1:
             if ch341.status == 0:
                 flash_id = flash_read_id(ch341)
-                if flash_id == 0xEF13:
+                if flash_id == 0xEF13 or flash_id == 0x5E13:
                     return
                 else:
                     # print("DBG: flash is disconnected")
