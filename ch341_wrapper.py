@@ -95,7 +95,7 @@ def flash_connect(ch341):
     else:
         if ch341.flash_connected == 0:
             flash_id = flash_read_id(ch341)
-            if flash_id == 0xEF13b or flash_id == 0x5E13:
+            if flash_id == 0xEF13 or flash_id == 0x5E13:
                 # print("DBG: flash is connected")
                 ch341.flash_connected = 1
                 return
