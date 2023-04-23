@@ -72,20 +72,21 @@ class ch341_class(object):
 
 
 def flash_read_id(ch341):
-    ch341.iobuffer[0] = 0x90
-    ch341.iobuffer[1] = 0x90
-    ch341.iobuffer[2] = 0x90
-    ch341.iobuffer[3] = 0x90
-    ch341.iobuffer[4] = 0x90
-    ch341.iobuffer[5] = 0x90
+    ch341.iobuffer[0] = 0x9f
+    ch341.iobuffer[1] = 0x9f
+    ch341.iobuffer[2] = 0x9f
+    ch341.iobuffer[3] = 0x9f
+    ch341.iobuffer[4] = 0x9f
+    ch341.iobuffer[5] = 0x9f
     ch341.ilength = 6
 
     ch341.set_stream(0)
     ch341.stream_spi4()
     ch341.set_stream(1)
 
-    return int.from_bytes(ch341.iobuffer[4], byteorder='big') * 256 \
-        + int.from_bytes(ch341.iobuffer[5], byteorder='big')
+    return int.from_bytes(ch341.iobuffer[1], byteorder='big') * 256 * 256 \
+        + int.from_bytes(ch341.iobuffer[2], byteorder='big') * 256 \
+        + int.from_bytes(ch341.iobuffer[3], byteorder='big')
 
 
 def flash_connect(ch341):
@@ -95,7 +96,7 @@ def flash_connect(ch341):
     else:
         if ch341.flash_connected == 0:
             flash_id = flash_read_id(ch341)
-            if flash_id == 0xEF13 or flash_id == 0x5E13:
+            if flash_id == 0xEF4014 or flash_id == 0x5E6014:
                 # print("DBG: flash is connected")
                 ch341.flash_connected = 1
                 return
@@ -104,7 +105,7 @@ def flash_connect(ch341):
         elif ch341.flash_connected == 1:
             if ch341.status == 0:
                 flash_id = flash_read_id(ch341)
-                if flash_id == 0xEF13 or flash_id == 0x5E13:
+                if flash_id == 0xEF4014 or flash_id == 0x5E6014:
                     return
                 else:
                     # print("DBG: flash is disconnected")
