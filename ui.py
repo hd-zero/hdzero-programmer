@@ -164,7 +164,8 @@ class MyGUI:
     def switch_vtx_callback(self, event):
         self.vtx_index_select = self.target_combobox.current()
         self.vtx_name_select = self.target_combobox['value'][self.vtx_index_select]
-        ch341.vtx_id = Download.vtx_id_list[self.vtx_name_select]
+        if self.vtx_index_select != 0:
+            ch341.vtx_id = Download.vtx_id_list[self.vtx_name_select]
         self.reset_fw_state()
 
     def switch_target_action(self):
@@ -370,7 +371,7 @@ class MyGUI:
                 if vtx_id_list[i] == ch341.vtx_id:
                     # print()
                     # print("Current vtx is", i)
-                    for j in range(0, len(vtx_id_list) + 1):
+                    for j in range(0, len(vtx_id_list)):
                         if self.target_combobox['value'][j] == i:
                             self.target_combobox.current(j)
                             self.vtx_name_select = i
