@@ -196,7 +196,7 @@ class MyGUI:
 
     def create_load_firmnware_online_btn(self):
         self.load_fw_online_btn = ttk.Button(
-            self.master, text='Load Firmwre(Online)', command=self.load_firmware_online_callback)
+            self.master, text='Load Firmware(Online)', command=self.load_firmware_online_callback)
         self.load_fw_online_btn.anchor = 'NW'
         self.load_fw_online_btn.place(width=150, height=24, x=20, y=100)
         # self.load_fw_online_btn.config(state=tk.DISABLED)
@@ -220,7 +220,7 @@ class MyGUI:
 
     def create_load_firmnware_local_btn(self):
         self.load_fw_local_btn = ttk.Button(
-            self.master, text='Load Firmwre(Local)', command=self.load_firmware_local_callback)
+            self.master, text='Load Firmware(Local)', command=self.load_firmware_local_callback)
         self.load_fw_local_btn.anchor = 'NW'
         self.load_fw_local_btn.place(width=150, height=24, x=180, y=100)
 
