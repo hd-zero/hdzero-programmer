@@ -42,6 +42,9 @@ class ch341_class(object):
 
     def get_driver_version(self):
         return self.dll.CH341GetDrvVersion()
+    
+    def get_chip_version(self):
+        return self.dll.CH341GetVerIC(self.iIndex)
 
     def set_stream(self, cs):
         if cs == True:
@@ -63,7 +66,7 @@ class ch341_class(object):
             # else:
             #    time.sleep(0.1)
         elif self.dev_connected == 1 and self.status == 0:
-            if self.open_device(0) < 0:
+             if self.get_chip_version() == 0:
                 self.dev_connected = 0
                 # print("DBG: ch341 is disconnected")
                 if self.flash_connected == 1:
