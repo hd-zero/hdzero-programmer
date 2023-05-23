@@ -31,18 +31,18 @@ class ch341_class(object):
         except:
             a = 1  # print("Error: Can't find"+self.dll_path)
 
-    def open_device(self, iIndex):
-        return self.dll.CH341OpenDevice(iIndex)
+    def open_device(self):
+        return self.dll.CH341OpenDevice(0)
 
-    def close_device(self, iIndex):
-        self.dll.CH341CloseDevice(iIndex)
+    def close_device(self):
+        self.dll.CH341CloseDevice(self.iIndex)
 
     def get_version(self):
         return self.dll.CH341GetVersion()
 
     def get_driver_version(self):
         return self.dll.CH341GetDrvVersion()
-    
+
     def get_chip_version(self):
         return self.dll.CH341GetVerIC(self.iIndex)
 
@@ -60,13 +60,13 @@ class ch341_class(object):
     #     self.dll.CH341GetDeviceDescr(iIndex, self.oBuffer_P, self.ioLength);
     def dev_connect(self):
         if self.dev_connected == 0:
-            if self.open_device(0) > 0:
+            if self.open_device() > 0:
                 self.dev_connected = 1
                 # print("DBG: ch341 is connected")
             # else:
             #    time.sleep(0.1)
         elif self.dev_connected == 1 and self.status == 0:
-             if self.get_chip_version() == 0:
+            if self.get_chip_version() == 0:
                 self.dev_connected = 0
                 # print("DBG: ch341 is disconnected")
                 if self.flash_connected == 1:
