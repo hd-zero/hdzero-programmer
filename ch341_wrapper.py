@@ -80,7 +80,7 @@ class ch341_class_linux(object):
     def __init__(self):
         self.dll = None
         self.dev_connected = 0
-        self.dll_path = './dll/linux/x64/libch347.so'
+        self.dll_path = './dll/linux/x86_64/libch347.so'
         self.iobuffer = create_string_buffer(65544)
         self.ilength = 0
         self.iIndex = 0
@@ -202,7 +202,7 @@ def ch341ThreadProc():
 
     while True:
         ch341.dev_connect()
-        # flash_connect(ch341)  
+        flash_connect(ch341)  
         if ch341.command == 1:
             flash_read_vtx_id(ch341)
             ch341.vtx_id = int.from_bytes(ch341.iobuffer[4], byteorder='big')
