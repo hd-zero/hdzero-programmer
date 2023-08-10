@@ -371,7 +371,7 @@ class MyGUI:
                 if vtx_id_list[i] == ch341.vtx_id:
                     # print()
                     # print("Current vtx is", i)
-                    for j in range(0, len(vtx_id_list)):
+                    for j in range(0, len(vtx_id_list) + 1):
                         if self.target_combobox['value'][j] == i:
                             self.target_combobox.current(j)
                             self.vtx_name_select = i
