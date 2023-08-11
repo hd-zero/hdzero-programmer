@@ -164,7 +164,7 @@ class MyGUI:
     def switch_vtx_callback(self, event):
         self.vtx_index_select = self.target_combobox.current()
         self.vtx_name_select = self.target_combobox['value'][self.vtx_index_select]
-        if self.vtx_index_select != 0:
+        if self.vtx_index_select != 0 and self.vtx_index_select <= len(Download.vtx_id_list):
             ch341.vtx_id = Download.vtx_id_list[self.vtx_name_select]
         self.reset_fw_state()
 
@@ -175,7 +175,8 @@ class MyGUI:
     def load_firmware_online_callback(event):
         global my_gui
         if my_gui.vtx_index_select != 0 and my_gui.ver_index_select != 0:
-            Download.downloadLink = Download.firmware_link_list[my_gui.ver_name_select][my_gui.vtx_name_select]
+            Download.downloadLink = Download.firmware_link_list[
+                my_gui.ver_name_select][my_gui.vtx_name_select]
             Download.localTemp = "./Data/Temp/fw.zip"
             Download.downloadCommand = 2
             my_gui.downloadCommand = 2
@@ -371,7 +372,8 @@ class MyGUI:
                 if vtx_id_list[i] == ch341.vtx_id:
                     # print()
                     # print("Current vtx is", i)
-                    for j in range(0, len(vtx_id_list) + 1):
+                    for j in range(0, len(Download.vtx_name_list[self.ver_index_select])):
+                        print(j, self.target_combobox['value'][j])
                         if self.target_combobox['value'][j] == i:
                             self.target_combobox.current(j)
                             self.vtx_name_select = i
