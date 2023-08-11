@@ -373,7 +373,6 @@ class MyGUI:
                     # print()
                     # print("Current vtx is", i)
                     for j in range(0, len(Download.vtx_name_list[self.ver_index_select])):
-                        print(j, self.target_combobox['value'][j])
                         if self.target_combobox['value'][j] == i:
                             self.target_combobox.current(j)
                             self.vtx_name_select = i
