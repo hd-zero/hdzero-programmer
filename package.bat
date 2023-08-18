@@ -1,1 +1,1 @@
-pyinstaller --noconsole -F -i icon256.png  HDZeroVTXProgrammer.py
+pyinstaller --noconsole -F -i icon256.png  HDZeroProgrammer.py

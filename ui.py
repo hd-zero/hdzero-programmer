@@ -61,7 +61,7 @@ class MyGUI:
         self.create_progressbar()
 
     def create_root_window(self):
-        titleString = "HDZero VTX Programmer"+" v"+version
+        titleString = "HDZero Programmer"+" v"+version
         windowX = 450
         windowY = 170
         offsetX = (self.master.winfo_screenwidth() - windowX)/2
