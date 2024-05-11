@@ -1,5 +1,10 @@
-
 __pycache__
-dist
-Data
 build
+dist
+vtx_common
+vtx_releases
+event_vrx_releases
+monitor_releases
+FW
+MONITOR.bin
+.spec

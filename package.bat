@@ -1,1 +1,1 @@
-pyinstaller --noconsole -F -i icon256.png  HDZeroProgrammer.py
+pyinstaller -i HDZeroIcon.ico -w --onefile --add-data "resource;data_folder" hdzero_programmer.py
