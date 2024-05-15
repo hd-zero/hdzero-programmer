@@ -27,16 +27,16 @@ class frame_monitor:
 
         self.brightness_min = 0
         self.brightness_max = 254
-        self.brightness_default = 128
+        self.brightness_default = 136
         self.contrast_min = 0
         self.contrast_max = 254
-        self.contrast_default = 64
+        self.contrast_default = 86
         self.saturation_min = 0
         self.saturation_max = 254
-        self.saturation_default = 64
+        self.saturation_default = 143
         self.backlight_min = 1
         self.backlight_max = 100
-        self.backlight_default = 100
+        self.backlight_default = 80
         self.cell_count_min = 1     # 1 auto
         self.cell_count_max = 5
         self.cell_count_default = 1
@@ -54,6 +54,7 @@ class frame_monitor:
         self.cell_count_scale = 0
         self.warning_cell_voltage_scale = 0
         self.osd_checkbutton = 0
+        self.reset_button = 0
 
         self.osd_var = tk.BooleanVar()
 
@@ -72,6 +73,7 @@ class frame_monitor:
         self.init_image_setting()
         self.init_power_setting()
         self.init_osd_setting()
+        self.init_reset_button()
 
         try:
             self.dll = ctypes.WinDLL(self.dll_name)
@@ -247,6 +249,26 @@ class frame_monitor:
             self.write_osd(1)
         else:
             self.write_osd(0)
+            
+    def on_reset_button_press(self):
+        self.brightness_scale.set(self.brightness_default)
+        self.contrast_scale.set(self.contrast_default)
+        self.saturation_scale.set(self.saturation_default)
+        self.backlight_scale.set(self.backlight_default)
+        self.cell_count_scale.set(self.cell_count_default)
+        self.warning_cell_voltage_scale.set(self.warning_cell_voltage_default)
+        self.osd_var.set(True)
+
+        self.brightness_label.config(text=f"{int(float(self.brightness_default))}")
+        self.brightness_label.config(text=f"{int(float(self.contrast_default))}")
+        self.saturation_label.config(text=f"{int(float(self.saturation_default))}")
+        self.backlight_label.config(text=f"{int(float(self.backlight_default))}")
+
+        self.on_cell_count_scale_changed(self.cell_count_default)
+        self.on_warning_cell_voltage_scale_changed(
+            self.warning_cell_voltage_default)
+        self.osd_var.set(True)
+        self.on_osd_checkoutbutton_changed()
 
     def init_image_setting(self):
         # brighrness
@@ -331,3 +353,9 @@ class frame_monitor:
         self.osd_checkbutton = ttk.Checkbutton(
             self._frame, variable=self.osd_var, text = "", command=self.on_osd_checkoutbutton_changed)
         self.osd_checkbutton.grid(row=row, column=0, sticky="w", padx=100)
+        
+    def init_reset_button(self):
+        row = 6
+        
+        self.reset_button = tk.Button(self._frame, text="Reset all settings to default value", command=self.on_reset_button_press)
+        self.reset_button.grid(row=row, column=1, sticky="w", padx=100)
