@@ -40,6 +40,7 @@ class ch341_class(object):
         self.addr_backlight = 0x25
         self.addr_cell_count = 0x26
         self.addr_warning_cell_voltage = 0x27
+        self.addr_osd = 0x28
         self.addr_fpga_device = 0x65  # 7bit address
 
         self.target_id = 0
@@ -137,6 +138,8 @@ class ch341_class(object):
         global_var.cell_count = self.ch341read_i2c(self.addr_cell_count)
         global_var.warning_cell_voltage = self.ch341read_i2c(
             self.addr_warning_cell_voltage)
+        global_var.osd = self.ch341read_i2c(self.addr_osd)
+        
         fpga_version = self.ch341read_i2c(0xff)
         print(f"cell:{global_var.cell_count:d} warning_cell:{global_var.warning_cell_voltage:d} fpga_version:0x{fpga_version:2x}")
 

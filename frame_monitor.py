@@ -23,6 +23,7 @@ class frame_monitor:
         self.addr_usb_write_backlight = 0x17
         self.addr_usb_write_cell_count = 0x18
         self.addr_usb_write_warning_cell_voltage = 0x19
+        self.addr_usb_write_osd = 0x1A
 
         self.brightness_min = 0
         self.brightness_max = 254
@@ -42,6 +43,9 @@ class frame_monitor:
         self.warning_cell_voltage_min = 28
         self.warning_cell_voltage_max = 42
         self.warning_cell_voltage_default = 28
+        self.osd_min = 0
+        self.osd_max = 1
+        self.osd_default = 1
 
         self.brightness_scale = 0
         self.contrast_scale = 0
@@ -49,6 +53,9 @@ class frame_monitor:
         self.backlight_scale = 0
         self.cell_count_scale = 0
         self.warning_cell_voltage_scale = 0
+        self.osd_checkbutton = 0
+
+        self.osd_var = tk.BooleanVar()
 
         self._frame.grid_rowconfigure(0, weight=1)
         self._frame.grid_rowconfigure(1, weight=1)
@@ -56,6 +63,7 @@ class frame_monitor:
         self._frame.grid_rowconfigure(3, weight=1)
         self._frame.grid_rowconfigure(4, weight=1)
         self._frame.grid_rowconfigure(5, weight=1)
+        self._frame.grid_rowconfigure(6, weight=1)
 
         self._frame.grid_columnconfigure(0, weight=0)
         self._frame.grid_columnconfigure(1, weight=0)
@@ -63,6 +71,7 @@ class frame_monitor:
 
         self.init_image_setting()
         self.init_power_setting()
+        self.init_osd_setting()
 
         try:
             self.dll = ctypes.WinDLL(self.dll_name)
@@ -108,7 +117,11 @@ class frame_monitor:
         self.write_i2c(self.addr_usb_write_warning_cell_voltage, warning_cell)
         # print(f"write_warning_cell_voltage {warning_cell}")
 
-    def write_setting(self, b, c, s, l, cell, warning_cell):
+    def write_osd(self, osd):
+        global_var.osd = osd
+        self.write_i2c(self.addr_usb_write_osd, osd)
+
+    def write_setting(self, b, c, s, l, cell, warning_cell, osd):
         """write setting from vrx.
         usually used for sync vrx setting.
         NOTE: Must run after setting_enable
@@ -126,12 +139,16 @@ class frame_monitor:
         if warning_cell < self.warning_cell_voltage_min or warning_cell > self.warning_cell_voltage_max:
             warning_cell = self.warning_cell_voltage_default
 
+        if osd < self.osd_min or osd > self.osd_max:
+            osd = self.osd_default
+
         self.write_brightness(b)
         self.write_contrast(c)
         self.write_saturation(s)
         self.write_backlight(l)
         self.write_cell_count(cell)
         self.write_warning_cell_voltage(warning_cell)
+        self.write_osd(osd)
 
         # update scale
         self.brightness_scale.set(b)
@@ -140,6 +157,11 @@ class frame_monitor:
         self.backlight_scale.set(l)
         self.cell_count_scale.set(cell)
         self.warning_cell_voltage_scale.set(warning_cell)
+
+        if osd == 1:
+            self.osd_var.set(True)
+        else:
+            self.osd_var.set(False)
 
         # update label
         self.brightness_label.config(text=f'{b}')
@@ -158,6 +180,7 @@ class frame_monitor:
         self.backlight_scale.configure(state="disabled")
         self.cell_count_scale.configure(state="disabled")
         self.warning_cell_voltage_scale.configure(state="disabled")
+        self.osd_checkbutton.configure(state="disabled")
 
     def setting_enable(self):
         self.brightness_scale.configure(state="normal")
@@ -166,6 +189,7 @@ class frame_monitor:
         self.backlight_scale.configure(state="normal")
         self.cell_count_scale.configure(state="normal")
         self.warning_cell_voltage_scale.configure(state="normal")
+        self.osd_checkbutton.configure(state="normal")
 
     def reset_scale(self):
         self.brightness_scale.set(self.brightness_min)
@@ -174,6 +198,7 @@ class frame_monitor:
         self.backlight_scale.set(self.backlight_min)
         self.cell_count_scale.set(self.cell_count_min)
         self.warning_cell_voltage_scale.set(self.warning_cell_voltage_min)
+        self.osd_var.set(False)
 
         self.brightness_label.config(text=f"{int(float(self.brightness_min))}")
         self.brightness_label.config(text=f"{int(float(self.contrast_min))}")
@@ -183,6 +208,8 @@ class frame_monitor:
         self.on_cell_count_scale_changed(self.cell_count_min)
         self.on_warning_cell_voltage_scale_changed(
             self.warning_cell_voltage_min)
+        self.osd_var.set(False)
+        self.on_osd_checkoutbutton_changed()
 
     def frame(self):
         return self._frame
@@ -214,6 +241,12 @@ class frame_monitor:
         self.warning_cell_voltage_label.config(
             text=f"{self.warning_cell_voltage/10}")
         self.write_warning_cell_voltage(int(float(value)))
+
+    def on_osd_checkoutbutton_changed(self):
+        if self.osd_var.get() == True:
+            self.write_osd(1)
+        else:
+            self.write_osd(0)
 
     def init_image_setting(self):
         # brighrness
@@ -288,3 +321,13 @@ class frame_monitor:
         self.warning_cell_voltage_label = ttk.Label(self._frame, text="2.8")
         self.warning_cell_voltage_label.grid(
             row=row, column=2, sticky="w", padx=10)
+
+    def init_osd_setting(self):
+        row = 6
+
+        label = ttk.Label(self._frame, text="OSD")
+        label.grid(row=row, column=0, sticky="w", padx=20)
+
+        self.osd_checkbutton = ttk.Checkbutton(
+            self._frame, variable=self.osd_var, text = "", command=self.on_osd_checkoutbutton_changed)
+        self.osd_checkbutton.grid(row=row, column=0, sticky="w", padx=100)

@@ -6,6 +6,7 @@ saturation = 0
 backlight = 100
 cell_count = 1
 warning_cell_voltage = 28
+osd = 0
 
 nIndex = 0
 PAGE_SIZE = 256

@@ -642,7 +642,7 @@ class MyGUI:
                     # self._programmer_frame.update_button_disable()
 
                     self._monitor_frame.write_setting(global_var.brightness, global_var.contrast, global_var.saturation,
-                                                      global_var.backlight, global_var.cell_count, global_var.warning_cell_voltage)
+                                                      global_var.backlight, global_var.cell_count, global_var.warning_cell_voltage, global_var.osd)
                     self.monitor_is_alive = 1
                 elif self.monitor_is_alive == 1 and my_ch341.monitor_connected == 0:  # to disconnect monitor
                     self.monitor_is_alive = 0
