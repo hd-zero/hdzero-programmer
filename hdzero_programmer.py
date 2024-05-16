@@ -2,8 +2,8 @@ import threading
 import os
 import sys
 import shutil
-from main_window import ui_thread_proc
-from download import download_thread_proc
+from main_window import main_window_ui
+from downloader import download_thread_proc
 from ch341 import ch341_thread_proc
 
 
@@ -37,16 +37,14 @@ def check_and_release_resource():
 
 def main():
     check_and_release_resource()
-    download_thread = threading.Thread(
-        target=download_thread_proc, name="download")
-    download_thread.start()
 
-    ui_thread = threading.Thread(target=ui_thread_proc, name="ui")
-    ui_thread.start()
+    download_thread = threading.Thread(target=download_thread_proc, name="downloader")
+    download_thread.start()
 
     ch341_thread = threading.Thread(target=ch341_thread_proc, name="ch341")
     ch341_thread.start()
 
+    main_window_ui()
 
 if __name__ == '__main__':
     main()

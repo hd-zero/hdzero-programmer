@@ -10,7 +10,7 @@ from frame_event_vrx import frame_event_vrx
 from frame_programmer import frame_programmer
 from frame_statusbar import frame_statusbar
 
-from download import *
+from downloader import *
 from parse_file import *
 import global_var
 from global_var import *
@@ -357,7 +357,7 @@ class MyGUI:
         self.downloading_window_status = 1
         self.downloading_window.overrideredirect(True)
 
-        self._main_window.attributes('-disable', True)
+        #self._main_window.attributes('-disable', True)
 
     def set_downloading_label(self, str):
         self.downloading_label.config(text=str)
@@ -403,7 +403,7 @@ class MyGUI:
 
             self._vtx_frame.create_radio_button_list(
                 list(my_parse.vtx_info.keys()), self.on_select_vtx_target, my_parse.vtx_target_image)
-            self._main_window.attributes('-disable', False)
+            #self._main_window.attributes('-disable', False)
 
         # vtx
         if self.current_selected_tab() == 0:
@@ -765,7 +765,7 @@ def on_closing():
 global my_gui
 
 
-def ui_thread_proc():
+def main_window_ui():
     global my_gui
     root = tk.Tk()
 
