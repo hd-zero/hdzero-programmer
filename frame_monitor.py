@@ -183,6 +183,7 @@ class frame_monitor:
         self.cell_count_scale.configure(state="disabled")
         self.warning_cell_voltage_scale.configure(state="disabled")
         self.osd_checkbutton.configure(state="disabled")
+        self.reset_button.configure(state="disable")
 
     def setting_enable(self):
         self.brightness_scale.configure(state="normal")
@@ -192,6 +193,7 @@ class frame_monitor:
         self.cell_count_scale.configure(state="normal")
         self.warning_cell_voltage_scale.configure(state="normal")
         self.osd_checkbutton.configure(state="normal")
+        self.reset_button.configure(state="normal")
 
     def reset_scale(self):
         self.brightness_scale.set(self.brightness_min)
@@ -249,7 +251,7 @@ class frame_monitor:
             self.write_osd(1)
         else:
             self.write_osd(0)
-            
+
     def on_reset_button_press(self):
         self.brightness_scale.set(self.brightness_default)
         self.contrast_scale.set(self.contrast_default)
@@ -259,10 +261,14 @@ class frame_monitor:
         self.warning_cell_voltage_scale.set(self.warning_cell_voltage_default)
         self.osd_var.set(True)
 
-        self.brightness_label.config(text=f"{int(float(self.brightness_default))}")
-        self.brightness_label.config(text=f"{int(float(self.contrast_default))}")
-        self.saturation_label.config(text=f"{int(float(self.saturation_default))}")
-        self.backlight_label.config(text=f"{int(float(self.backlight_default))}")
+        self.brightness_label.config(
+            text=f"{int(float(self.brightness_default))}")
+        self.brightness_label.config(
+            text=f"{int(float(self.contrast_default))}")
+        self.saturation_label.config(
+            text=f"{int(float(self.saturation_default))}")
+        self.backlight_label.config(
+            text=f"{int(float(self.backlight_default))}")
 
         self.on_cell_count_scale_changed(self.cell_count_default)
         self.on_warning_cell_voltage_scale_changed(
@@ -347,15 +353,16 @@ class frame_monitor:
     def init_osd_setting(self):
         row = 6
 
-        label = ttk.Label(self._frame, text="OSD")
+        label = ttk.Label(self._frame, text="Enable OSD")
         label.grid(row=row, column=0, sticky="w", padx=20)
 
         self.osd_checkbutton = ttk.Checkbutton(
-            self._frame, variable=self.osd_var, text = "", command=self.on_osd_checkoutbutton_changed)
+            self._frame, variable=self.osd_var, text="", command=self.on_osd_checkoutbutton_changed)
         self.osd_checkbutton.grid(row=row, column=0, sticky="w", padx=100)
-        
+
     def init_reset_button(self):
         row = 6
-        
-        self.reset_button = tk.Button(self._frame, text="Reset all settings to default value", command=self.on_reset_button_press)
+
+        self.reset_button = tk.Button(
+            self._frame, text="Reset settings", command=self.on_reset_button_press)
         self.reset_button.grid(row=row, column=1, sticky="w", padx=100)
