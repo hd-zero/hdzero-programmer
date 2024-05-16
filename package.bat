@@ -1,1 +1,1 @@
-pyinstaller -i HDZeroIcon.ico -w --onefile --add-data "resource;data_folder" hdzero_programmer.py
+pyinstaller -i HDZeroIcon.ico -w --onefile --add-data "resource;resource" hdzero_programmer.py
