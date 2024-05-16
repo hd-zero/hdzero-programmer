@@ -263,7 +263,7 @@ class frame_monitor:
 
         self.brightness_label.config(
             text=f"{int(float(self.brightness_default))}")
-        self.brightness_label.config(
+        self.contrast_label.config(
             text=f"{int(float(self.contrast_default))}")
         self.saturation_label.config(
             text=f"{int(float(self.saturation_default))}")
