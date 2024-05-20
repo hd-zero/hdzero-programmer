@@ -37,8 +37,8 @@ class frame_monitor:
         self.backlight_min = 1
         self.backlight_max = 100
         self.backlight_default = 80
-        self.cell_count_min = 1     # 1 auto
-        self.cell_count_max = 5
+        self.cell_count_min = 1     # 1=auto
+        self.cell_count_max = 6
         self.cell_count_default = 1
         self.warning_cell_voltage_min = 28
         self.warning_cell_voltage_max = 42
@@ -171,7 +171,7 @@ class frame_monitor:
         self.saturation_label.config(text=f'{s}')
         self.backlight_label.config(text=f'{l}')
 
-        option = ["Auto", "2S", "3S", "4S", "5S"]
+        option = ["Auto", "2S", "3S", "4S", "5S", "6S"]
         self.cell_count_label.config(text=option[cell-1])
         self.warning_cell_voltage_label.config(text=f"{warning_cell/10}")
 
@@ -235,7 +235,7 @@ class frame_monitor:
         self.write_backlight(int(float(value)))
 
     def on_cell_count_scale_changed(self, value):
-        option = ["Auto", "2S", "3S", "4S", "5S"]
+        option = ["Auto", "2S", "3S", "4S", "5S", "6S"]
         self.cell_count = int(float(value))
         self.cell_count_label.config(text=option[self.cell_count-1])
         self.write_cell_count(int(float(value)))
