@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import ctypes
 import global_var
+import time
 
 
 class frame_monitor:
@@ -88,6 +89,7 @@ class frame_monitor:
 
     def write_i2c(self, addr, byte):
         self.dll.CH341WriteI2C(0, self.addr_usb_write_fpga_device, addr, byte)
+        time.sleep(0.001)
 
     def write_brightness(self, b):
         global_var.brightness = b
