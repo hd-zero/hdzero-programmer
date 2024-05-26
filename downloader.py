@@ -6,7 +6,7 @@ import os
 import zipfile
 
 
-class download:
+class downloader:
     def __init__(self):
 
         self.status = download_status.IDLE.value
@@ -41,7 +41,7 @@ class download:
             return 0
 
 
-my_download = download()
+my_download = downloader()
 
 
 def download_thread_proc():

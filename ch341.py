@@ -10,6 +10,7 @@ from global_var import *
 from ctypes import *
 import global_var
 import subprocess
+import platform
 
 
 class ch341_class(object):
@@ -26,11 +27,10 @@ class ch341_class(object):
         self.fw_8339_buf = create_string_buffer(FW_8339SIZE)
 
         self.dll = None
+        self.dll_name = None
         self.target = -1
         self.status = ch341_status.IDLE.value        # idle
         self.read_setting_flag = 1
-        self.dll_name = "CH341DLL.DLL"
-
         self.reconnect_vtx = 0
 
         # ------ monitor -------------
@@ -78,19 +78,21 @@ class ch341_class(object):
         self.buffer_size = 2560
         self.write_buffer = create_string_buffer(self.buffer_size)
 
-        try:
-            self.dll = ctypes.WinDLL(self.dll_name)
-        except:
-            command = "resource\driver\SETUP.EXE \S"
-            print("Need to install ch341 driver")
-            print("Installing ...")
-            subprocess.run(command, shell=True, capture_output=True, text=True)
-            print("done")
-            time.sleep(1)
+        if platform.system() == "Windows":
             try:
+                self.dll_name = "CH341DLL.DLL"
                 self.dll = ctypes.WinDLL(self.dll_name)
             except:
-                a = 1
+                print("Need to install ch341 driver")
+                print("Installing ...")
+                command = "resource\\driver\\SETUP.EXE \\S"
+                subprocess.run(command, shell=True, capture_output=True, text=True)
+                print("done")
+                time.sleep(1)
+                try:
+                    self.dll = ctypes.WinDLL(self.dll_name)
+                except:
+                    pass
 
     def parse_monitor_fw(self, fw_path):
         try:
