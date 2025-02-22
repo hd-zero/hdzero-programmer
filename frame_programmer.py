@@ -51,7 +51,7 @@ class frame_programmer:
         return self._frame
 
     def version_combobox_set_default(self):
-        self.version_combobox.set("Load Online Fiwmare")
+        self.version_combobox.set("Load Online Firmware")
 
     def version_combobox_disable(self):
         self.version_combobox["state"] = "disabled"

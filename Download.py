@@ -46,7 +46,7 @@ my_download = download()
 
 def download_thread_proc():
     my_download.download_file(
-        "https://api.github.com/repos/hd-zero/hdzero-vtx/releases", "resource/vtx_releases", 1)
+        "https://api.github.com/repos/hd-zero/hdzero-vtx/releases", "resource/vtx_releases", 0)
     my_download.download_file(
         "https://raw.githubusercontent.com/hd-zero/hdzero-vtx/main/src/common.h", "resource/vtx_common", 0)
     my_download.download_file(
