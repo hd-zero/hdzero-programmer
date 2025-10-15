@@ -64,7 +64,7 @@ class MainWindow(QMainWindow):
         self.tb_vtx.setReadOnly(True)
 
         # VTX page stackedWidget
-        self.btn_vtx_connect = self.ui, findChild(QPushButton, "btn_vtx_connect")
+        self.btn_vtx_connect = self.ui.findChild(QPushButton, "btn_vtx_connect")
 
         # left sidebar run settings
         self.is_container_expanded = True
@@ -81,6 +81,7 @@ class MainWindow(QMainWindow):
         self.btn_sidebar_settings.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(3))
         self.btn_sidebar_eventVrx.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(4))
         self.btn_load_fw_local_vtx.clicked.connect(self.on_load_fw_local_vtx)
+        self.btn_close_app.clicked.connect(self.close_app)
 
         # connect VTX buttons with func
         self.btn_vtx_connect.clicked.connect(self.vtx_connect_function)
@@ -141,4 +142,8 @@ class MainWindow(QMainWindow):
 
     def vtx_flash_function(self) -> None:
         """Function for connect action with button @flash in vtx page"""
+        ...
+
+    def close_app_function(self) -> None:
+        """Function for connect action with button @close_app"""
         ...
