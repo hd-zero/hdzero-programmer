@@ -3,7 +3,15 @@ import sys
 from pathlib import Path
 
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtWidgets import QMainWindow, QFrame, QPushButton, QStackedWidget, QFileDialog, QTableView, QTextBrowser
+from PySide6.QtWidgets import (
+    QMainWindow,
+    QFrame,
+    QPushButton,
+    QStackedWidget,
+    QFileDialog,
+    QTableView,
+    QTextBrowser,
+)
 from PySide6.QtCore import QPropertyAnimation, QEasingCurve
 from PySide6.QtGui import QIcon
 from app.core.custom_logger import setup_logger
@@ -23,8 +31,8 @@ class MainWindow(QMainWindow):
         """
         super().__init__()
         loader = QUiLoader()
-        if getattr(sys, 'frozen', False):
-            ui_file = Path(__file__).parent.parent.parent/ "lib" / "ui" / "main_window.ui"
+        if getattr(sys, "frozen", False):
+            ui_file = Path(__file__).parent.parent.parent / "lib" / "ui" / "main_window.ui"
         else:
             ui_file = Path(__file__).parent.parent / "ui" / "main_window.ui"
         logger.info(f"Loading {ui_file}")
@@ -55,6 +63,9 @@ class MainWindow(QMainWindow):
         self.tb_vtx = self.ui.findChild(QTextBrowser, "tb_vtx")
         self.tb_vtx.setReadOnly(True)
 
+        # VTX page stackedWidget
+        self.btn_vtx_connect = self.ui, findChild(QPushButton, "btn_vtx_connect")
+
         # left sidebar run settings
         self.is_container_expanded = True
         self.expanded_width_on_start = 200
@@ -70,6 +81,9 @@ class MainWindow(QMainWindow):
         self.btn_sidebar_settings.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(3))
         self.btn_sidebar_eventVrx.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(4))
         self.btn_load_fw_local_vtx.clicked.connect(self.on_load_fw_local_vtx)
+
+        # connect VTX buttons with func
+        self.btn_vtx_connect.clicked.connect(self.vtx_connect_function)
 
     def toggle_left_sidebar_frame_width(self) -> None:
         """Animation sidebar"""
@@ -112,3 +126,19 @@ class MainWindow(QMainWindow):
         else:
             _f = "Error!! -> Wrong file selected"
         self.tb_vtx.setText(f"Bin File: {_f}")
+
+    def vtx_connect_function(self) -> None:
+        """Function for connect action with button @connect in vtx page"""
+        ...
+
+    def vtx_disconnect_function(self) -> None:
+        """Function for connect action with button @disconnect in vtx page"""
+        ...
+
+    def vtx_backup_function(self) -> None:
+        """Function for connect action with button @backup in vtx page"""
+        ...
+
+    def vtx_flash_function(self) -> None:
+        """Function for connect action with button @flash in vtx page"""
+        ...
