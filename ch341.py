@@ -309,7 +309,7 @@ class ch341_class(object):
             self.flash_switch2()
             flash_id_2 = self.flash_read_id()
             if flash_id_0 == flash_id_1 and flash_id_1 == flash_id_2:
-                if flash_id_0 == 0xEF4014 or flash_id_0 == 0x5E6014:
+                if flash_id_0 == 0xEF4014 or flash_id_0 == 0x5E6014 or flash_id_0 == 0x856014:
                     return 1
 
             return 0
