@@ -8,11 +8,13 @@ class parse:
         self.vtx_common_path = "resource/vtx_common"
         self.event_vrx_releases_path = "resource/event_vrx_releases"
         self.monitor_releases_path = "resource/monitor_releases"
+        self.radio_releases_path = "resource/radio_releases"
         self.vtx_tragets_image_path = "resource/vtx_targets.png"
 
         self.vtx_info = {}
-        self.event_vrx_info = {}
         self.monitor_info = {}
+        self.event_vrx_info = {}
+        self.radio_info = {}
         self.vtx_target_image = []
 
     def parse_vtx_common(self):
@@ -115,6 +117,24 @@ class parse:
                 return 0
 
         return 1
+
+    def parse_radio_releases(self):
+        try:
+            with open(self.radio_releases_path) as f:
+                data = json.load(f)
+
+            for i in range(len(data)):
+                link_list = []
+                for j in range(len(data[i]['assets'])):
+                    link_list.append(data[i]['assets'][j]
+                                     ['browser_download_url'])
+
+                    version = data[i]['tag_name']
+                    url = data[i]['assets'][j]['browser_download_url']
+                    self.radio_info[version] = url
+            return 1
+        except:
+            return 0
 
 
 my_parse = parse()

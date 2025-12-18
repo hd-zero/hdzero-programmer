@@ -55,6 +55,8 @@ def download_thread_proc():
         "https://api.github.com/repos/ligenxxxx/event-vrx/releases", "resource/event_vrx_releases", 1)
     my_download.download_file(
         "https://api.github.com/repos/ligenxxxx/hv/releases", "resource/monitor_releases", 1)
+    my_download.download_file(
+        "https://api.github.com/repos/ligenxxxx/radio/releases", "resource/radio_releases", 1)
 
     time.sleep(1)
     my_download.status = download_status.FILE_PARSE.value
@@ -98,6 +100,16 @@ def download_thread_proc():
                 my_download.status = download_status.IDLE.value
             else:
                 my_download.status = download_status.DOWNLOAD_EVENT_VRX_FW_FAILED.value
+
+        elif my_download.status == download_status.DOWNLOAD_RADIO_FW.value:
+            ret = my_download.download_file(
+                my_download.url, my_download.save_path, 1)
+            if ret == 1:
+                my_download.status = download_status.DOWNLOAD_RADIO_FW_DONE.value
+            elif ret == 2:  # stop
+                my_download.status = download_status.IDLE.value
+            else:
+                my_download.status = download_status.DOWNLOAD_RADIO_FW_FAILED.value
 
         elif my_download.status == download_status.DOWNLOAD_EXIT.value:
             sys.exit()
