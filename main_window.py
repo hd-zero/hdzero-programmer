@@ -857,19 +857,15 @@ class MyGUI:
                         "Downloading Firmware ...", "SystemButtonFace")
                 else:
                     my_ch341.written_len = 0
-                    my_ch341.to_write_len = 2000
+                    my_ch341.to_write_len = 1000
                     self._programmer_frame.update_button_set_text_update(
                         "Radio")
                     self._programmer_frame.update_button_disable()
                     self._statusbar_frame.label_hidden()
                     my_ch341.status = ch341_status.RADIO_UPDATE_ELRS_TX.value
             elif my_ch341.status == ch341_status.RADIO_UPDATE_ELRS_TX.value or my_ch341.status == ch341_status.RADIO_UPDATE_ELRS_BACKPACK.value:  # radio refresh progress bar
-                if my_ch341.written_len < my_ch341.fw_index * 222:
-                    if my_ch341.fw_index == 4 or my_ch341.fw_index == 8:
+                if my_ch341.written_len < my_ch341.fw_index * 400:
                         my_ch341.written_len += 1
-                    else:
-                        my_ch341.written_len += 2
-
                 value = (my_ch341.written_len /
                          my_ch341.to_write_len * 100) % 101
                 self._statusbar_frame.progress_bar_set_value(value)

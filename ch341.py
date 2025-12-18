@@ -626,53 +626,18 @@ def ch341_thread_proc():
             if my_ch341.parse_radio_fw(my_ch341.fw_path) == 0:
                 my_ch341.status = ch341_status.RADIO_FW_ERROR.value
             else:
-                my_ch341.written_len = 10
-                
                 my_ch341.fw_index = 1
-                if my_radio.program_elrs_tx(0x1000, "resource/elrs_tx/bootloader.bin") == False:
+                if my_radio.program_elrs_tx() == False:
                     my_ch341.status = ch341_status.RADIO_FW_ERROR.value
-                my_ch341.written_len = 222
-                
-                my_ch341.fw_index = 2
-                if my_radio.program_elrs_tx(0x8000, "resource/elrs_tx/partitions.bin") == False:
-                    my_ch341.status = ch341_status.RADIO_FW_ERROR.value
-                my_ch341.written_len = 444
-                
-                my_ch341.fw_index = 3
-                if my_radio.program_elrs_tx(0xe000, "resource/elrs_tx/boot_app0.bin") == False:
-                    my_ch341.status = ch341_status.RADIO_FW_ERROR.value
-                my_ch341.written_len = 666
-                
-                my_ch341.fw_index = 4
-                if my_radio.program_elrs_tx(0x10000, "resource/elrs_tx/firmware.bin") == False:
-                    my_ch341.status = ch341_status.RADIO_FW_ERROR.value
-                my_ch341.written_len = 888
                 my_ch341.status = ch341_status.RADIO_UPDATE_ELRS_BACKPACK.value
         elif my_ch341.status == ch341_status.RADIO_UPDATE_ELRS_BACKPACK.value:  # update elrs backpack
             if my_ch341.parse_radio_fw(my_ch341.fw_path) == 0:
                 my_ch341.status = ch341_status.RADIO_FW_ERROR.value
             else:
-                my_ch341.written_len = 888
-
-                my_ch341.fw_index = 5
-                if my_radio.program_elrs_backpack(0x1000, "resource/elrs_backpack/bootloader.bin") == False:
+                my_ch341.written_len = 400
+                my_ch341.fw_index = 2
+                if my_radio.program_elrs_backpack() == False:
                     my_ch341.status = ch341_status.RADIO_FW_ERROR.value
-                my_ch341.written_len = 1110
-                
-                my_ch341.fw_index = 6
-                if my_radio.program_elrs_backpack(0x8000, "resource/elrs_backpack/partitions.bin") == False:
-                    my_ch341.status = ch341_status.RADIO_FW_ERROR.value
-                my_ch341.written_len = 1333
-                
-                my_ch341.fw_index = 7
-                if my_radio.program_elrs_backpack(0xe000, "resource/elrs_backpack/boot_app0.bin") == False:
-                    my_ch341.status = ch341_status.RADIO_FW_ERROR.value
-                my_ch341.written_len = 1555
-                
-                my_ch341.fw_index = 8
-                if my_radio.program_elrs_backpack(0x10000, "resource/elrs_backpack/firmware.bin") == False:
-                    my_ch341.status = ch341_status.RADIO_FW_ERROR.value
-                my_ch341.written_len = 1777
                 my_ch341.status = ch341_status.RADIO_UPDATEDONE.value
         
 

@@ -79,7 +79,7 @@ class radio_class(object):
                 return 1
         return 0
     
-    def search_elrs_tx_port(self):
+    def search_elrs_port(self):
         ports = list(serial.tools.list_ports.comports())
         for i in range(0, len(ports)):
             if (self.find_word_in_string(ports[i].description, 'CH340')):
@@ -108,7 +108,7 @@ class radio_class(object):
         else:
             return False
     
-    def program_elrs_tx(self, base_address, fw):
+    def program_elrs_tx(self):
         if self.search_stm32_port() == 0:
             return False
 
@@ -118,7 +118,7 @@ class radio_class(object):
         self.ser.close()
 
         time.sleep(1)
-        if self.search_elrs_tx_port() == 0:
+        if self.search_elrs_port() == 0:
             return False
         self.ser.close()
         
@@ -127,13 +127,16 @@ class radio_class(object):
             baud=460800,
             chip="esp32",
             flash_args=[
-                (base_address, fw),
+                (0x1000, "resource/elrs_tx/bootloader.bin"),
+                (0x8000, "resource/elrs_tx/partitions.bin"),
+                (0xe000, "resource/elrs_tx/boot_app0.bin"),
+                (0x10000, "resource/elrs_tx/firmware.bin"),
             ],
         )
 
         return True
 
-    def program_elrs_backpack(self, base_address, fw):
+    def program_elrs_backpack(self):
         if self.search_stm32_port() == 0:
             return False
 
@@ -143,7 +146,7 @@ class radio_class(object):
         self.ser.close()
 
         time.sleep(1)
-        if self.search_elrs_tx_port() == 0:
+        if self.search_elrs_port() == 0:
             return False
         self.ser.close()
         
@@ -152,7 +155,10 @@ class radio_class(object):
             baud=460800,
             chip="esp32c3",
             flash_args=[
-                (base_address, fw),
+                (0x0000, "resource/elrs_backpack/bootloader.bin"),
+                (0x8000, "resource/elrs_backpack/partitions.bin"),
+                (0xe000, "resource/elrs_backpack/boot_app0.bin"),
+                (0x10000, "resource/elrs_backpack/firmware.bin"),
             ],
         )
 
