@@ -631,6 +631,7 @@ def ch341_thread_proc():
                 my_ch341.status = ch341_status.RADIO_FW_ERROR.value
 
             my_ch341.fw_index = 1
+            my_ch341.update_error_flag = 0
 
             if my_radio.program_elrs_tx() == False:
                 my_ch341.update_error_flag = 1
