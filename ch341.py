@@ -626,9 +626,10 @@ def ch341_thread_proc():
         elif my_ch341.status == ch341_status.RADIO_DISCONNECTED.value:  # connect radio
             if my_radio.radio_is_active() != 0:
                 my_ch341.status = ch341_status.RADIO_CONNECTED.value
-                if my_ch341.parse_radio_fw(my_ch341.fw_path) == 0:
-                    my_ch341.status = ch341_status.RADIO_FW_ERROR.value
         elif my_ch341.status == ch341_status.RADIO_UPDATE_ELRS_TX.value:  # update elrs tx
+            if my_ch341.parse_radio_fw(my_ch341.fw_path) == 0:
+                my_ch341.status = ch341_status.RADIO_FW_ERROR.value
+
             my_ch341.fw_index = 1
 
             if my_radio.program_elrs_tx() == False:

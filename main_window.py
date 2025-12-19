@@ -847,7 +847,7 @@ class MyGUI:
                     "Firmware update failed. Network error", "red")
 
             # update
-            elif my_ch341.status == ch341_status.RADIO_CONNECTED.value:  # radio is connected
+            if my_ch341.status == ch341_status.RADIO_CONNECTED.value:  # radio is connected
                 my_ch341.status = ch341_status.IDLE.value
                 if self._programmer_frame.mode == 0:
                     my_download.url = self._programmer_frame.url
