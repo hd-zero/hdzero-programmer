@@ -809,7 +809,7 @@ class MyGUI:
 
                 self._statusbar_frame.progress_bar_set_value(0)
                 self._statusbar_frame.status_label_set_text(
-                    "Fiwamre update failed. Firmware error", "red")
+                    "Firmware update failed. Firmware error", "red")
 
         # --------------------- radio -------------------------------
         if self.current_selected_tab() == 3:
@@ -863,28 +863,22 @@ class MyGUI:
                     self._programmer_frame.update_button_disable()
                     self._statusbar_frame.label_hidden()
                     my_ch341.status = ch341_status.RADIO_UPDATE_ELRS_TX.value
+            
             elif my_ch341.status == ch341_status.RADIO_UPDATE_ELRS_TX.value or my_ch341.status == ch341_status.RADIO_UPDATE_ELRS_BACKPACK.value:  # radio refresh progress bar
-                if my_ch341.written_len < my_ch341.fw_index * 400:
+                if my_ch341.written_len < my_ch341.fw_index * 400 and my_ch341.written_len < my_ch341.to_write_len:
                         my_ch341.written_len += 1
                 value = (my_ch341.written_len /
                          my_ch341.to_write_len * 100) % 101
                 self._statusbar_frame.progress_bar_set_value(value)
-            elif my_ch341.status == ch341_status.RADIO_UPDATEDONE.value:  # radio update done
-                my_ch341.status = ch341_status.IDLE.value
+            
+            elif my_ch341.status == ch341_status.RADIO_UPDATE_STM32.value:
+                my_ch341.written_len += 2
+                if my_ch341.written_len > my_ch341.to_write_len:
+                    my_ch341.written_len = my_ch341.to_write_len
 
-                self.notebook_enable()
-
-                self._programmer_frame.update_button_set_text_update(
-                    "Radio")
-                self._programmer_frame.update_button_enable()
-                self._programmer_frame.version_combobox_enable()
-                self._programmer_frame.local_fw_button_enable()
-                self._programmer_frame.online_fw_button_enable(
-                    self.network_error)
-
-                self._statusbar_frame.progress_bar_set_value(100)
-                self._statusbar_frame.status_label_set_text(
-                    "Firmware updated.", "#06b025")
+                value = (my_ch341.written_len /
+                         my_ch341.to_write_len * 100) % 101
+                self._statusbar_frame.progress_bar_set_value(value)
 
             elif my_ch341.status == ch341_status.RADIO_FW_ERROR.value:
                 my_ch341.status = ch341_status.IDLE.value
@@ -901,7 +895,58 @@ class MyGUI:
 
                 self._statusbar_frame.progress_bar_set_value(0)
                 self._statusbar_frame.status_label_set_text(
-                    "Fiwamre update failed. Firmware error", "red")
+                    "Firmware update failed, Firmware error.", "red")
+
+            elif my_ch341.status == ch341_status.RADIO_UPDATE_STM32_FAILED.value:
+                my_ch341.status = ch341_status.IDLE.value
+
+                self.notebook_enable()
+
+                self._programmer_frame.update_button_set_text_update(
+                    "Radio")
+                self._programmer_frame.update_button_enable()
+                self._programmer_frame.version_combobox_enable()
+                self._programmer_frame.local_fw_button_enable()
+                self._programmer_frame.online_fw_button_enable(
+                    self.network_error)
+
+                self._statusbar_frame.progress_bar_set_value(0)
+                self._statusbar_frame.status_label_set_text(
+                    "Update firmware failed, repower and try again.", "red")
+
+            elif my_ch341.status == ch341_status.RADIO_UPDATE_ELRS_FAILED.value:
+                my_ch341.status = ch341_status.IDLE.value
+
+                self.notebook_enable()
+
+                self._programmer_frame.update_button_set_text_update(
+                    "Radio")
+                self._programmer_frame.update_button_enable()
+                self._programmer_frame.version_combobox_enable()
+                self._programmer_frame.local_fw_button_enable()
+                self._programmer_frame.online_fw_button_enable(
+                    self.network_error)
+
+                self._statusbar_frame.progress_bar_set_value(0)
+                self._statusbar_frame.status_label_set_text(
+                    "Update ELRS failed, repower and try again.", "red")
+            
+            elif my_ch341.status == ch341_status.RADIO_UPDATE_DONE.value:  # radio update done
+                my_ch341.status = ch341_status.IDLE.value
+
+                self.notebook_enable()
+
+                self._programmer_frame.update_button_set_text_update(
+                    "Radio")
+                self._programmer_frame.update_button_enable()
+                self._programmer_frame.version_combobox_enable()
+                self._programmer_frame.local_fw_button_enable()
+                self._programmer_frame.online_fw_button_enable(
+                    self.network_error)
+
+                self._statusbar_frame.progress_bar_set_value(100)
+                self._statusbar_frame.status_label_set_text(
+                    "Firmware updated, repower Radio now", "#06b025")
 
 
         self._main_window.after(100, self.refresh)
