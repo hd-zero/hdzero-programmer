@@ -13,6 +13,7 @@ class download:
         self.url = ""
         self.save_path = ""
         self.to_stop = 0
+        self.pre_download = 0
 
     def download_file(self, url, save_path, clear):
         print(f"Downloading {url}")
@@ -45,20 +46,9 @@ my_download = download()
 
 
 def download_thread_proc():
-    my_download.download_file(
-        "https://api.github.com/repos/hd-zero/hdzero-vtx/releases", "resource/vtx_releases", 0)
-    my_download.download_file(
-        "https://raw.githubusercontent.com/hd-zero/hdzero-vtx/main/src/common.h", "resource/vtx_common", 0)
-    my_download.download_file(
-        "https://raw.githubusercontent.com/hd-zero/hdzero-vtx/main/vtx_targets.png", "resource/vtx_targets.png", 0)
-    my_download.download_file(
-        "https://api.github.com/repos/ligenxxxx/event-vrx/releases", "resource/event_vrx_releases", 1)
-    my_download.download_file(
-        "https://api.github.com/repos/ligenxxxx/hv/releases", "resource/monitor_releases", 1)
-    my_download.download_file(
-        "https://api.github.com/repos/ligenxxxx/radio/releases", "resource/radio_releases", 1)
-
-    time.sleep(1)
+    while my_download.pre_download != 63:
+        time.sleep(0.1)
+    
     my_download.status = download_status.FILE_PARSE.value
 
     while True:
@@ -115,3 +105,33 @@ def download_thread_proc():
             sys.exit()
 
         time.sleep(0.01)
+
+def download_vtx_releases():
+    my_download.download_file(
+        "https://api.github.com/repos/hd-zero/hdzero-vtx/releases", "resource/vtx_releases", 0)
+    my_download.pre_download += 1
+    
+def download_vtx_common():
+    my_download.download_file(
+        "https://raw.githubusercontent.com/hd-zero/hdzero-vtx/main/src/common.h", "resource/vtx_common", 0)
+    my_download.pre_download += 2
+
+def download_vtx_targets_image():
+    my_download.download_file(
+        "https://raw.githubusercontent.com/hd-zero/hdzero-vtx/main/vtx_targets.png", "resource/vtx_targets.png", 0)
+    my_download.pre_download += 4
+
+def download_event_vrx_releases():
+    my_download.download_file(
+        "https://api.github.com/repos/hd-zero/event-vrx/releases", "resource/event_vrx_releases", 1)
+    my_download.pre_download += 8
+
+def download_monitor_releases():
+    my_download.download_file(
+        "https://api.github.com/repos/hd-zero/monitor/releases", "resource/monitor_releases", 1)
+    my_download.pre_download += 16
+
+def download_radio_releases():
+    my_download.download_file(
+        "https://api.github.com/repos/ligenxxxx/radio/releases", "resource/radio_releases", 1)
+    my_download.pre_download += 32
