@@ -818,7 +818,7 @@ class MyGUI:
                 my_download.status = download_status.IDLE.value
                 my_ch341.fw_path = my_download.save_path
                 my_ch341.written_len = 0
-                my_ch341.to_write_len = 2000
+                my_ch341.to_write_len = 1000
 
                 self._statusbar_frame.label_hidden()
                 self._programmer_frame.update_button_set_text_update(
