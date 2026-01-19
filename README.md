@@ -9,7 +9,7 @@ windows 3.10.5 32-bit
 ### Install package
 
 ```
-.venv/Scripts/python.exe -m pip install Pillow pyserial esptool xmodem requests
+.venv/Scripts/python.exe -m pip install Pillow pyserial esptool xmodem requests pyinstaller
 ```
 
 ### Run hdzero_programmer.py

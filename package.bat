@@ -1,1 +1,1 @@
-pyinstaller -i HDZeroIcon.ico --onefile --add-data "resource;data_folder" hdzero_programmer.py --hidden-import esptool --hidden-import esptool
+ .\.venv\Scripts\pyinstaller.exe -i HDZeroIcon.ico -w --onefile --collect-all esptool --add-data "resource;data_folder" hdzero_programmer.py --hidden-import esptool --hidden-import esptool
