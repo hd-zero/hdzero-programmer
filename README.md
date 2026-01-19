@@ -1,6 +1,18 @@
-## python version
+## Python Version
 
 windows 3.10.5 32-bit
+
+## How To Run
+
+### Create venv
+
+### Install package
+
+```
+.venv/Scripts/python.exe -m pip install Pillow pyserial esptool xmodem requests
+```
+
+### Run hdzero_programmer.py
 
 ## generate exe
 
