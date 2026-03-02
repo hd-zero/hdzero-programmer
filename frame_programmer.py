@@ -151,7 +151,7 @@ class frame_programmer:
         self.is_cancel = 0
         self.update_button["text"] = "Flash " + string
 
-    def shorten_path(self, path, max_length=40):
+    def shorten_path(self, path, max_length=64):
         if len(path) <= max_length:
             return path
         else:
