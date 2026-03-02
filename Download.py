@@ -133,5 +133,5 @@ def download_monitor_releases():
 
 def download_radio_releases():
     my_download.download_file(
-        "https://api.github.com/repos/ligenxxxx/radio/releases", "resource/radio_releases", 1)
+        "https://api.github.com/repos/hd-zero/hdzero-radio/releases", "resource/radio_releases", 1)
     my_download.pre_download += 32
