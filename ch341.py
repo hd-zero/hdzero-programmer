@@ -100,7 +100,7 @@ class ch341_class(object):
             logger.info(f"Loaded {self.dll_name} successfully")
         except Exception as e:
             logger.error(f"Failed to load {self.dll_name}: {e}")
-            command = "resource\driver\SETUP.EXE \S"
+            command = r"resource\driver\SETUP.EXE \S"
             logger.info("Need to install ch341 driver")
             logger.info("Installing ...")
             try:
