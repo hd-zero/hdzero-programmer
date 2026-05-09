@@ -21,7 +21,9 @@ import base64
 from icon32 import icon32
 import io
 import program_radio
+import logging
 
+logger = logging.getLogger(__name__)
 
 class MyGUI:
 
@@ -117,7 +119,8 @@ class MyGUI:
         try:
             version_list = list(my_parse.vtx_info[selected_target].keys())[1:]
             self._programmer_frame.version_combobox_update_values(version_list)
-        except:
+        except Exception as e:
+            logger.debug(f"on_select_vtx_target exception: {e}")
             pass
         self._programmer_frame.version_combobox_set_default()
         self._programmer_frame.version_combobox_enable()

@@ -2,7 +2,9 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
 import os
+import logging
 
+logger = logging.getLogger(__name__)
 
 class frame_programmer:
     def __init__(self, parent):
@@ -113,13 +115,15 @@ class frame_programmer:
             with open("resource/local_path", "r") as file:
                 path = file.read()
                 file.close()
-        except:
+        except Exception as e:
+            logger.debug(f"Could not read local_path: {e}")
             path = "."
 
         try:
             self.local_file_path = filedialog.askopenfilename(
                 initialdir=path, title="select a firmware", filetypes=filetypes)
-        except:
+        except Exception as e:
+            logger.warning(f"File dialog execution failed: {e}")
             print("please select a firmware file")
 
         if self.local_file_path:

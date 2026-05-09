@@ -4,7 +4,9 @@ import time
 from global_var import *
 import os
 import zipfile
+import logging
 
+logger = logging.getLogger(__name__)
 
 class download:
     def __init__(self):
@@ -16,7 +18,7 @@ class download:
         self.pre_download = 0
 
     def download_file(self, url, save_path, clear):
-        print(f"Downloading {url}")
+        logger.info(f"Downloading {url}")
         if clear:
             if os.path.exists(save_path):
                 os.remove(save_path)
@@ -27,18 +29,23 @@ class download:
                     for chunk in response.iter_content(chunk_size=1024):
                         if self.to_stop == 1:
                             self.to_stop = 0
+                            logger.info("Download stopped by user instruction.")
                             return 2
                         if chunk:
                             file.write(chunk)
                 if self.status == download_status.DOWNLOAD_EXIT.value:
+                    logger.info("Download thread exiting...")
                     sys.exit()
+                logger.info(f"Successfully downloaded to {save_path}")
                 return 1
             else:
                 if self.status == download_status.DOWNLOAD_EXIT.value:
+                    logger.info("Download thread exiting...")
                     sys.exit()
-                print("Failed to download file.")
+                logger.warning(f"Failed to download file. HTTP Status: {response.status_code}")
                 return 0
-        except:
+        except Exception as e:
+            logger.error(f"Networking error while downloading: {e}")
             return 0
 
 

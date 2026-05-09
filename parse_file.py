@@ -1,6 +1,8 @@
 import json
 from PIL import Image
+import logging
 
+logger = logging.getLogger(__name__)
 
 class parse:
     def __init__(self):
@@ -37,8 +39,8 @@ class parse:
                     elif lines[i] == "/* define VTX ID end */\n":
                         start = 0
             return 1
-        except:
-            print("something error")
+        except Exception as e:
+            logger.error(f"Error parsing VTX common: {e}")
             return 0
 
     def parse_vtx_releases(self):
@@ -64,7 +66,8 @@ class parse:
                     url = data[i]['assets'][j]['browser_download_url']
                     self.vtx_info[name][version] = url
             return 1
-        except:
+        except Exception as e:
+            logger.error(f"Error parsing VTX releases: {e}")
             return 0
 
     def parse_event_vrx_releases(self):
@@ -82,7 +85,8 @@ class parse:
                     url = data[i]['assets'][j]['browser_download_url']
                     self.event_vrx_info[version] = url
             return 1
-        except:
+        except Exception as e:
+            logger.error(f"Error parsing event VRX releases: {e}")
             return 0
 
     def parse_monitor_releases(self):
@@ -100,20 +104,23 @@ class parse:
                     url = data[i]['assets'][j]['browser_download_url']
                     self.monitor_info[version] = url
             return 1
-        except:
+        except Exception as e:
+            logger.error(f"Error parsing monitor releases: {e}")
             return 0
 
     def parse_vtx_tragets_image(self, num):
         try:
             ori_img = Image.open(self.vtx_tragets_image_path)
-        except:
+        except Exception as e:
+            logger.error(f"Error opening target image: {e}")
             return 0
 
         for i in range(0, num):
             try:
                 self.vtx_target_image.append(
                     ori_img.crop((0, i*100, 299, i*100+99)))
-            except:
+            except Exception as e:
+                logger.error(f"Error cropping target image: {e}")
                 return 0
 
         return 1
@@ -133,7 +140,8 @@ class parse:
                     url = data[i]['assets'][j]['browser_download_url']
                     self.radio_info[version] = url
             return 1
-        except:
+        except Exception as e:
+            logger.error(f"Error parsing radio releases: {e}")
             return 0
 
 

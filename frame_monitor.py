@@ -3,7 +3,9 @@ from tkinter import ttk
 import ctypes
 import global_var
 import time
+import logging
 
+logger = logging.getLogger(__name__)
 
 class frame_monitor:
     def __init__(self, parent):
@@ -78,7 +80,8 @@ class frame_monitor:
 
         try:
             self.dll = ctypes.WinDLL(self.dll_name)
-        except:
+        except Exception as e:
+            logger.error(f"Failed to load {self.dll_name} in frame_monitor: {e}")
             print("Please check ch341 driver")
 
     def usb_heart(self):

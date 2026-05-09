@@ -3,6 +3,7 @@ import os
 import sys
 import shutil
 import time
+import logging
 from main_window import ui_thread_proc
 from download import download_thread_proc
 from download import download_vtx_releases
@@ -13,6 +14,15 @@ from download import download_monitor_releases
 from download import download_radio_releases
 from ch341 import ch341_thread_proc
 
+def setup_logging():
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.FileHandler("hdzero_programmer.log"),
+            logging.StreamHandler(sys.stdout)
+        ]
+    )
 
 def get_resource_folder():
     if getattr(sys, 'frozen', False):
@@ -43,6 +53,8 @@ def check_and_release_resource():
 
 
 def main():
+    setup_logging()
+    logging.info("Starting HDZero Programmer...")
     check_and_release_resource()
 
     ui_thread = threading.Thread(target=ui_thread_proc, name="ui")

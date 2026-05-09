@@ -1,7 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
+import logging
 
+logger = logging.getLogger(__name__)
 
 class frame_vtx():
     def __init__(self, parent):
@@ -44,5 +46,6 @@ class frame_vtx():
     def radio_button_reset(self):
         try:
             self.radio_button[0].invoke()
-        except:
+        except Exception as e:
+            logger.debug(f"radio_button_reset hit an error invoking first button: {e}")
             pass

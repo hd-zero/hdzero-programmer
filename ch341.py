@@ -12,6 +12,18 @@ from ctypes import *
 import global_var
 import subprocess
 import zipfile
+import logging
+
+# Configure basic logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("hdzero_programmer.log"),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
 
 
 class ch341_class(object):
@@ -85,19 +97,26 @@ class ch341_class(object):
 
         try:
             self.dll = ctypes.WinDLL(self.dll_name)
-        except:
+            logger.info(f"Loaded {self.dll_name} successfully")
+        except Exception as e:
+            logger.error(f"Failed to load {self.dll_name}: {e}")
             command = "resource\driver\SETUP.EXE \S"
-            print("Need to install ch341 driver")
-            print("Installing ...")
-            subprocess.run(command, shell=True, capture_output=True, text=True)
-            print("done")
+            logger.info("Need to install ch341 driver")
+            logger.info("Installing ...")
+            try:
+                subprocess.run(command, shell=True, capture_output=True, text=True)
+                logger.info("Driver installation command finished.")
+            except Exception as ex:
+                logger.error(f"Error running driver installer: {ex}")
             time.sleep(1)
             try:
                 self.dll = ctypes.WinDLL(self.dll_name)
-            except:
-                a = 1
+                logger.info(f"Loaded {self.dll_name} successfully after driver install")
+            except Exception as e:
+                logger.error(f"Failed to load {self.dll_name} even after driver install attempt: {e}")
 
     def parse_monitor_fw(self, fw_path):
+        logger.info(f"Parsing monitor firmware: {fw_path}")
         try:
             with open(fw_path, "rb") as file:
                 file.seek(2)
@@ -107,42 +126,63 @@ class ch341_class(object):
                     file.read(4), byteorder='little')
                 self.fw_8339_size = int.from_bytes(
                     file.read(4), byteorder='little')
+                
+                logger.debug(f"Sizes parsed - 5680: {self.fw_5680_size}, FPGA: {self.fw_fpga_size}, 8339: {self.fw_8339_size}")
+
                 if self.fw_5680_size < 65536 and self.fw_fpga_size < 10000000 and self.fw_8339_size < 10000000:
                     self.fw_5680_buf = file.read(self.fw_5680_size)
                     self.fw_fpga_buf = file.read(self.fw_fpga_size)
                     self.fw_8339_buf = file.read(self.fw_8339_size)
+                    logger.info("Monitor firmware parsed successfully.")
                     return 1
                 else:
+                    logger.warning("Firmware sizes out of expected bounds.")
                     return 0
-        except:
+        except Exception as e:
+            logger.error(f"Error parsing monitor firmware: {e}")
             return 0
 
     def parse_event_vrx_fw(self, fw_path):
+        logger.info(f"Parsing event VRX firmware: {fw_path}")
         try:
             with open(fw_path, "rb") as file:
                 file_size = os.path.getsize(fw_path)
                 head_size = file.read(8)
                 self.fw_5680_size = int(head_size) - 2560
                 self.fw_fpga_size = file_size - 8 - self.fw_5680_size
+                logger.debug(f"Event VRX sizes - 5680: {self.fw_5680_size}, FPGA: {self.fw_fpga_size}")
+                
                 if self.fw_5680_size < 65536 and self.fw_fpga_size < 10000000:
+                    logger.info("Event VRX firmware parsed successfully")
                     return 1
                 else:
+                    logger.warning("Event VRX firmware sizes out of bounds")
                     return 0
-        except:
+        except Exception as e:
+            logger.error(f"Error parsing event VRX firmware: {e}")
             return 0
+
     def parse_radio_fw(self, fw_path):
+        logger.info(f"Parsing radio firmware: {fw_path}")
         try:
             with zipfile.ZipFile(fw_path, "r") as z:
                 z.extractall("resource/")
+            logger.info("Radio firmware unzipped successfully")
             return 1
-        except:
+        except Exception as e:
+            logger.error(f"Error parsing/unzipping radio firmware: {e}")
             return 0
 
     def ch341read_i2c(self, addr):
-        self.dll.CH341ReadI2C(0, self.addr_fpga_device, addr, self.iobuffer)
-        return int.from_bytes(self.iobuffer[0], byteorder='big')
+        try:
+            self.dll.CH341ReadI2C(0, self.addr_fpga_device, addr, self.iobuffer)
+            return int.from_bytes(self.iobuffer[0], byteorder='big')
+        except Exception as e:
+            logger.error(f"Error reading I2C at address {addr}: {e}")
+            return 0
 
     def read_setting(self):
+        logger.info("Reading device settings...")
         global_var.brightness = self.ch341read_i2c(self.addr_brightness)
         global_var.contrast = self.ch341read_i2c(self.addr_contrast)
         global_var.saturation = self.ch341read_i2c(self.addr_saturation)
@@ -153,7 +193,7 @@ class ch341_class(object):
         global_var.osd = self.ch341read_i2c(self.addr_osd)
         
         fpga_version = self.ch341read_i2c(0xff)
-        print(f"cell:{global_var.cell_count:d} warning_cell:{global_var.warning_cell_voltage:d} fpga_version:0x{fpga_version:2x}")
+        logger.info(f"cell:{global_var.cell_count:d} warning_cell:{global_var.warning_cell_voltage:d} fpga_version:0x{fpga_version:2x}")
 
     def set_stream(self, cs):
         if cs == True:
@@ -312,6 +352,7 @@ class ch341_class(object):
 
     def connect_vtx(self):
         if self.dll.CH341OpenDevice(0) < 0:
+            logger.debug("Failed to open CH341 device for VTX")
             return 0
         else:
             self.flash_switch0()
@@ -320,10 +361,13 @@ class ch341_class(object):
             flash_id_1 = self.flash_read_id()
             self.flash_switch2()
             flash_id_2 = self.flash_read_id()
+            logger.debug(f"VTX Flash IDs - 0:{hex(flash_id_0)} 1:{hex(flash_id_1)} 2:{hex(flash_id_2)}")
             if flash_id_0 == flash_id_1 and flash_id_1 == flash_id_2:
                 if flash_id_0 == 0xEF4014 or flash_id_0 == 0x5E6014 or flash_id_0 == 0x856014:
+                    logger.info("VTX connected successfully")
                     return 1
 
+            logger.warning(f"VTX flash ID mismatch or unknown ID. IDs: {hex(flash_id_0)}")
             return 0
 
     def flash_write_target_id(self):
@@ -333,32 +377,41 @@ class ch341_class(object):
         self.flash_wait_busy()
 
     def flash_write_fw(self):
-        size = os.path.getsize(self.fw_path)
-        file = open(self.fw_path, "rb")
-        fw = file.read()
-
-        page_number = (size + (1 << 8) - 1) >> 8
-        self.write_crc = 0
-        self.read_crc = 0
-
-        for page in range(page_number):
-            base_address = page << 8
-            self.flash_write_enable()
-            self.flash_write_page(base_address, 256, fw[base_address:])
-            self.flash_write_disable()
-            self.flash_wait_busy()
+        logger.info(f"Starting firmware flash write from {self.fw_path}")
+        try:
+            size = os.path.getsize(self.fw_path)
+            file = open(self.fw_path, "rb")
+            fw = file.read()
+            file.close()
             
-            self.flash_read_page(base_address, 256)
+            page_number = (size + (1 << 8) - 1) >> 8
+            self.write_crc = 0
+            self.read_crc = 0
+    
+            for page in range(page_number):
+                base_address = page << 8
+                self.flash_write_enable()
+                self.flash_write_page(base_address, 256, fw[base_address:])
+                self.flash_write_disable()
+                self.flash_wait_busy()
+                
+                self.flash_read_page(base_address, 256)
+                
+                my_ch341.written_len += 256
             
-            my_ch341.written_len += 256
-        
-        if self.write_crc == self.read_crc:
-            return 1
-        else:
+            if self.write_crc == self.read_crc:
+                logger.info(f"Firmware flash successful! CRC match: {self.write_crc}")
+                return 1
+            else:
+                logger.error(f"Firmware flash failed! CRC mismatch - Write: {self.write_crc}, Read: {self.read_crc}")
+                return 0
+        except Exception as e:
+            logger.error(f"Exception during flash writing: {e}")
             return 0
 
     def connect_monitor(self, sleep_sec):
         if self.dll.CH341OpenDevice(0) < 0:
+            logger.debug("Failed to open CH341 device for Monitor")
             return 0
         else:
             # self.dll.CH341SetStream(0, 0x82)
@@ -366,23 +419,30 @@ class ch341_class(object):
             self.flash_switch1()
             flash_id_2 = self.flash_read_id()
             if flash_id_2 == 0xEF4018:
+                logger.info("Monitor connected successfully")
                 return 1
             else:
+                logger.debug(f"Monitor not connected or ID mismatch: {hex(flash_id_2)}")
                 return 0
 
     def fw_write_to_flash(self, fw_buf, fw_size):
-        page_number = (fw_size + (1 << 8) - 1) >> 8
-        for page in range(page_number):
-            block = page << 8
-            if (block & 0xffff) == 0:
-                self.flash_erase_flash(block)
-
-            base_address = page << 8
-            self.flash_write_enable()
-            self.flash_write_page(base_address, 256, fw_buf[base_address:])
-            self.flash_write_disable()
-            self.flash_wait_busy()
-            my_ch341.written_len += 256
+        logger.info(f"Writing {fw_size} bytes to flash...")
+        try:
+            page_number = (fw_size + (1 << 8) - 1) >> 8
+            for page in range(page_number):
+                block = page << 8
+                if (block & 0xffff) == 0:
+                    self.flash_erase_flash(block)
+    
+                base_address = page << 8
+                self.flash_write_enable()
+                self.flash_write_page(base_address, 256, fw_buf[base_address:])
+                self.flash_write_disable()
+                self.flash_wait_busy()
+                my_ch341.written_len += 256
+            logger.info("Write to flash completed.")
+        except Exception as e:
+            logger.error(f"Error writing to flash: {e}")
         """
         for page in range(page_number):
             base_address = page << 8
@@ -541,7 +601,12 @@ my_ch341 = ch341_class()
 
 
 def ch341_thread_proc():
+    last_status = None
     while True:
+        if my_ch341.status != last_status:
+            logger.info(f"State transition: {last_status} -> {my_ch341.status}")
+            last_status = my_ch341.status
+
         if my_ch341.status == ch341_status.STATUS_EXIT.value:
             sys.exit()
 

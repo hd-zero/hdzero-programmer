@@ -2,8 +2,10 @@ import serial.tools.list_ports
 import time
 import esptool
 import sys
+import logging
 from xmodem import XMODEM
 
+logger = logging.getLogger(__name__)
 
 def flash_esp_api(
     port,
@@ -37,7 +39,9 @@ def flash_esp_api(
     try:
         sys.argv = ["esptool.py"] + argv
         esptool.main()
-    except:
+        logger.info("esptool flashed successfully")
+    except Exception as e:
+        logger.error(f"esptool exception: {e}")
         return False
     finally:
         sys.argv = old_argv
@@ -54,7 +58,8 @@ class radio_class(object):
     def find_word_in_string(self, s, word):
         try:
             words = s.split()
-        except:
+        except Exception as e:
+            logger.error(f"find_word_in_string split failed: {e}")
             return 0
 
         for w in words:
@@ -86,9 +91,12 @@ class radio_class(object):
                 time.sleep(1)
                 try:
                     self.ser = serial.Serial(self.com, 115200, timeout=2)
+                    logger.info(f"Opened STM32 port {self.com}")
                     return 1
-                except:
+                except Exception as e:
+                    logger.error(f"Failed to open STM32 port {self.com}: {e}")
                     return 0
+        logger.debug("STM32 port not found")
         return 0
 
     def search_elrs_port(self):
@@ -148,7 +156,9 @@ class radio_class(object):
             stream = open("resource/hdzero_radio_stm32.bin", "rb")
             modem = XMODEM(self.getc, self.putc)
             modem.send(stream)
-        except:
+            logger.info("Sent stm32 via XMODEM")
+        except Exception as e:
+            logger.error(f"XMODEM send failed: {e}")
             return False
 
         cmd = "ccc"
