@@ -14,15 +14,6 @@ import subprocess
 import zipfile
 import logging
 
-# Configure basic logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler("hdzero_programmer.log"),
-        logging.StreamHandler()
-    ]
-)
 logger = logging.getLogger(__name__)
 
 
@@ -352,7 +343,7 @@ class ch341_class(object):
 
     def connect_vtx(self):
         if self.dll.CH341OpenDevice(0) < 0:
-            logger.debug("Failed to open CH341 device for VTX")
+            logger.warning("Failed to open CH341 device for VTX")
             return 0
         else:
             self.flash_switch0()
@@ -411,7 +402,7 @@ class ch341_class(object):
 
     def connect_monitor(self, sleep_sec):
         if self.dll.CH341OpenDevice(0) < 0:
-            logger.debug("Failed to open CH341 device for Monitor")
+            logger.warning("Failed to open CH341 device for Monitor")
             return 0
         else:
             # self.dll.CH341SetStream(0, 0x82)
@@ -455,6 +446,7 @@ class ch341_class(object):
     # ---------------- event_vrx --------------------------------
     def connect_event_vrx(self):
         if self.dll.CH341OpenDevice(nIndex) < 0:
+            logger.warning("Failed to open CH341 device for Event VRX")
             return 0
         else:
             self.dll.CH341SetStream(nIndex, 0x81)
@@ -604,7 +596,13 @@ def ch341_thread_proc():
     last_status = None
     while True:
         if my_ch341.status != last_status:
-            logger.info(f"State transition: {last_status} -> {my_ch341.status}")
+            try:
+                status_name = ch341_status(my_ch341.status).name
+                last_status_name = ch341_status(last_status).name if last_status is not None else "None"
+            except ValueError:
+                status_name = str(my_ch341.status)
+                last_status_name = str(last_status)
+            logger.info(f"State transition: {last_status_name} ({last_status}) -> {status_name} ({my_ch341.status})")
             last_status = my_ch341.status
 
         if my_ch341.status == ch341_status.STATUS_EXIT.value:
@@ -720,5 +718,4 @@ def ch341_thread_proc():
             else:
                 my_ch341.status = ch341_status.RADIO_UPDATE_DONE.value
 
-        else:
-            time.sleep(0.1)
+        time.sleep(0.05)
