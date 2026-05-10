@@ -4,6 +4,8 @@ import sys
 import shutil
 import time
 import logging
+import glob
+from datetime import datetime
 from main_window import ui_thread_proc
 from download import download_thread_proc
 from download import download_vtx_releases
@@ -15,13 +17,31 @@ from download import download_radio_releases
 from ch341 import ch341_thread_proc
 
 def setup_logging():
+    log_dir = "logs"
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir, exist_ok=True)
+    
+    # Clean up old logs (keep last 10)
+    log_files = glob.glob(os.path.join(log_dir, "hdzero_programmer_*.log"))
+    log_files.sort(key=os.path.getmtime)
+    while len(log_files) > 10:
+        oldest = log_files.pop(0)
+        try:
+            os.remove(oldest)
+        except OSError:
+            pass
+            
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    log_filename = os.path.join(log_dir, f"hdzero_programmer_{timestamp}.log")
+
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         handlers=[
-            logging.FileHandler("hdzero_programmer.log"),
+            logging.FileHandler(log_filename, mode='w'),
             logging.StreamHandler(sys.stdout)
-        ]
+        ],
+        force=True
     )
 
 def get_resource_folder():
