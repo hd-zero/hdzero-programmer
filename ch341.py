@@ -34,7 +34,20 @@ class ch341_class(object):
         self.target = -1
         self.status = ch341_status.IDLE.value        # idle
         self.read_setting_flag = 1
-        self.dll_name = "CH341DLL.DLL"
+        
+        is_64bit = sys.maxsize > 2**32
+        dll_name = "CH341DLLA64.DLL" if is_64bit else "CH341DLL.DLL"
+        
+        if getattr(sys, 'frozen', False):
+            base_dir = sys._MEIPASS
+        else:
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            
+        driver_path = os.path.join(base_dir, "resource", "driver", dll_name)
+        if os.path.exists(driver_path):
+            self.dll_name = driver_path
+        else:
+            self.dll_name = dll_name
 
         self.reconnect_vtx = 0
 

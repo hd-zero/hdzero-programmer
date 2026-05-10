@@ -13,3 +13,4 @@ elrs_tx
 hdzero_radio_stm32.bin
 local_path
 radio_releases
+logs

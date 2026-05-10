@@ -3,6 +3,8 @@ from tkinter import ttk
 import ctypes
 import global_var
 import time
+import sys
+import os
 import logging
 
 logger = logging.getLogger(__name__)
@@ -13,7 +15,20 @@ class frame_monitor:
         self._frame = tk.Frame(parent)
         parent.add(self._frame, text="Monitor")
 
-        self.dll_name = "CH341DLL.DLL"
+        is_64bit = sys.maxsize > 2**32
+        dll_name = "CH341DLLA64.DLL" if is_64bit else "CH341DLL.DLL"
+        
+        if getattr(sys, 'frozen', False):
+            base_dir = sys._MEIPASS
+        else:
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            
+        driver_path = os.path.join(base_dir, "resource", "driver", dll_name)
+        if os.path.exists(driver_path):
+            self.dll_name = driver_path
+        else:
+            self.dll_name = dll_name
+
         self.color_background = "#303030"
         self.color_label = "white"
 
