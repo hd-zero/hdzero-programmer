@@ -343,11 +343,7 @@ class ch341_class(object):
 
     def connect_vtx(self):
         if self.dll.CH341OpenDevice(0) < 0:
-<<<<<<< HEAD
-            logger.debug("Failed to open CH341 device for VTX")
-=======
             logger.warning("Failed to open CH341 device for VTX")
->>>>>>> b7dd810 (Cherry-pick log manager and modified drivers from Nov 2025 commit. Ommit unnecessary files)
             return 0
         else:
             self.flash_switch0()
@@ -406,11 +402,7 @@ class ch341_class(object):
 
     def connect_monitor(self, sleep_sec):
         if self.dll.CH341OpenDevice(0) < 0:
-<<<<<<< HEAD
-            logger.debug("Failed to open CH341 device for Monitor")
-=======
             logger.warning("Failed to open CH341 device for Monitor")
->>>>>>> b7dd810 (Cherry-pick log manager and modified drivers from Nov 2025 commit. Ommit unnecessary files)
             return 0
         else:
             # self.dll.CH341SetStream(0, 0x82)
@@ -604,9 +596,6 @@ def ch341_thread_proc():
     last_status = None
     while True:
         if my_ch341.status != last_status:
-<<<<<<< HEAD
-            logger.info(f"State transition: {last_status} -> {my_ch341.status}")
-=======
             try:
                 status_name = ch341_status(my_ch341.status).name
                 last_status_name = ch341_status(last_status).name if last_status is not None else "None"
@@ -614,7 +603,6 @@ def ch341_thread_proc():
                 status_name = str(my_ch341.status)
                 last_status_name = str(last_status)
             logger.info(f"State transition: {last_status_name} ({last_status}) -> {status_name} ({my_ch341.status})")
->>>>>>> b7dd810 (Cherry-pick log manager and modified drivers from Nov 2025 commit. Ommit unnecessary files)
             last_status = my_ch341.status
 
         if my_ch341.status == ch341_status.STATUS_EXIT.value:
