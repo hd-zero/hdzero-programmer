@@ -6,6 +6,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class frame_programmer:
     def __init__(self, parent):
         self._parent = parent
@@ -29,17 +30,26 @@ class frame_programmer:
         self.is_load_online = tk.StringVar()
 
         self.version_combobox = ttk.Combobox(
-            self._frame, values=self.online_list, state="readonly")
+            self._frame, values=self.online_list, state="readonly"
+        )
         self.version_combobox_set_default()
         self.version_combobox_disable()
 
         self.online_fw_button = ttk.Radiobutton(
-            self._frame, text="Load Online Firmware", variable=self.is_load_online, value='1')
+            self._frame,
+            text="Load Online Firmware",
+            variable=self.is_load_online,
+            value="1",
+        )
         self.online_fw_button_show()
         self.online_fw_button_disable()
 
         self.local_fw_button = ttk.Radiobutton(
-            self._frame, text="Load Local Firmware", variable=self.is_load_online, value='0')
+            self._frame,
+            text="Load Local Firmware",
+            variable=self.is_load_online,
+            value="0",
+        )
         self.local_fw_button.grid(row=1, column=1, padx=5, pady=5)
         self.local_fw_button_disable()
 
@@ -79,17 +89,16 @@ class frame_programmer:
         self.version_combobox.grid_remove()
 
     def online_fw_button_hidden(self):
-        self.version_combobox.grid(
-            row=1, column=0, padx=5, pady=5)
-        self.version_combobox.event_generate('<Button-1>')
+        self.version_combobox.grid(row=1, column=0, padx=5, pady=5)
+        self.version_combobox.event_generate("<Button-1>")
         self.online_fw_button.grid_remove()
         self.local_fw_button_set_str_default()
 
     def online_fw_button_set_str(self, str):
-        self.online_fw_button['text'] = str
+        self.online_fw_button["text"] = str
 
     def online_fw_button_set_str_default(self):
-        self.online_fw_button['text'] = "Load Online Firmware"
+        self.online_fw_button["text"] = "Load Online Firmware"
 
     def local_fw_button_disable(self):
         self.local_fw_button.config(state="disabled")
@@ -121,17 +130,17 @@ class frame_programmer:
 
         try:
             self.local_file_path = filedialog.askopenfilename(
-                initialdir=path, title="select a firmware", filetypes=filetypes)
+                initialdir=path, title="select a firmware", filetypes=filetypes
+            )
         except Exception as e:
             logger.warning(f"File dialog execution failed: {e}")
             print("please select a firmware file")
 
         if self.local_file_path:
             self.mode = 1
-            self.local_file_path_shorten = self.shorten_path(
-                self.local_file_path)
+            self.local_file_path_shorten = self.shorten_path(self.local_file_path)
             self.local_fw_button_set_str(self.local_file_path_shorten)
-            path = self.local_file_path[:self.local_file_path.rfind('/') + 1]
+            path = self.local_file_path[: self.local_file_path.rfind("/") + 1]
             with open("resource/local_path", "w") as file:
                 file.write(path)
                 file.close()

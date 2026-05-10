@@ -1,5 +1,6 @@
 from enum import IntEnum
 from enum import Enum, unique
+
 brightness = 0
 contrast = 0
 saturation = 0
@@ -70,6 +71,5 @@ class download_status(Enum):
     DOWNLOAD_RADIO_FW = 30
     DOWNLOAD_RADIO_FW_DONE = 31
     DOWNLOAD_RADIO_FW_FAILED = 32
-
 
     DOWNLOAD_EXIT = 255

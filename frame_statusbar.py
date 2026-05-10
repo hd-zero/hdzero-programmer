@@ -32,18 +32,17 @@ class frame_statusbar:
 
     def status_label_set_bg(self, color):
         self.label["bg"] = color
-        '''
+        """
         if color == 1: # system
             self.label["bg"] = "SystemButtonFace"
         elif color == 2: # red
             self.label["bg"] = "red"
         else: # green
             self.label["bg"] = "#06b025"
-        '''
+        """
 
     def init_progress_bar(self):
-        self.bar = ttk.Progressbar(
-            self._frame, orient="horizontal", mode="determinate")
+        self.bar = ttk.Progressbar(self._frame, orient="horizontal", mode="determinate")
         self.bar.pack(fill="both", expand=True)
 
     def progress_bar_set_value(self, value):

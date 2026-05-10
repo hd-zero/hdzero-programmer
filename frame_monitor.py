@@ -9,6 +9,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class frame_monitor:
     def __init__(self, parent):
         self._parent = parent
@@ -17,12 +18,12 @@ class frame_monitor:
 
         is_64bit = sys.maxsize > 2**32
         dll_name = "CH341DLLA64.DLL" if is_64bit else "CH341DLL.DLL"
-        
-        if getattr(sys, 'frozen', False):
+
+        if getattr(sys, "frozen", False):
             base_dir = sys._MEIPASS
         else:
             base_dir = os.path.dirname(os.path.abspath(__file__))
-            
+
         driver_path = os.path.join(base_dir, "resource", "driver", dll_name)
         if os.path.exists(driver_path):
             self.dll_name = driver_path
@@ -55,7 +56,7 @@ class frame_monitor:
         self.backlight_min = 1
         self.backlight_max = 100
         self.backlight_default = 80
-        self.cell_count_min = 1     # 1=auto
+        self.cell_count_min = 1  # 1=auto
         self.cell_count_max = 6
         self.cell_count_default = 1
         self.warning_cell_voltage_min = 28
@@ -158,7 +159,10 @@ class frame_monitor:
             l = self.backlight_default
         if cell < self.cell_count_min or cell > self.cell_count_max:
             cell = self.cell_count_default
-        if warning_cell < self.warning_cell_voltage_min or warning_cell > self.warning_cell_voltage_max:
+        if (
+            warning_cell < self.warning_cell_voltage_min
+            or warning_cell > self.warning_cell_voltage_max
+        ):
             warning_cell = self.warning_cell_voltage_default
 
         if osd < self.osd_min or osd > self.osd_max:
@@ -186,13 +190,13 @@ class frame_monitor:
             self.osd_var.set(False)
 
         # update label
-        self.brightness_label.config(text=f'{b}')
-        self.contrast_label.config(text=f'{c}')
-        self.saturation_label.config(text=f'{s}')
-        self.backlight_label.config(text=f'{l}')
+        self.brightness_label.config(text=f"{b}")
+        self.contrast_label.config(text=f"{c}")
+        self.saturation_label.config(text=f"{s}")
+        self.backlight_label.config(text=f"{l}")
 
         option = ["Auto", "2S", "3S", "4S", "5S", "6S"]
-        self.cell_count_label.config(text=option[cell-1])
+        self.cell_count_label.config(text=option[cell - 1])
         self.warning_cell_voltage_label.config(text=f"{warning_cell/10}")
 
     def setting_disable(self):
@@ -230,8 +234,7 @@ class frame_monitor:
         self.backlight_label.config(text=f"{int(float(self.brightness_min))}")
 
         self.on_cell_count_scale_changed(self.cell_count_min)
-        self.on_warning_cell_voltage_scale_changed(
-            self.warning_cell_voltage_min)
+        self.on_warning_cell_voltage_scale_changed(self.warning_cell_voltage_min)
         self.osd_var.set(False)
         self.on_osd_checkoutbutton_changed()
 
@@ -257,13 +260,12 @@ class frame_monitor:
     def on_cell_count_scale_changed(self, value):
         option = ["Auto", "2S", "3S", "4S", "5S", "6S"]
         self.cell_count = int(float(value))
-        self.cell_count_label.config(text=option[self.cell_count-1])
+        self.cell_count_label.config(text=option[self.cell_count - 1])
         self.write_cell_count(int(float(value)))
 
     def on_warning_cell_voltage_scale_changed(self, value):
         self.warning_cell_voltage = int(float(value))
-        self.warning_cell_voltage_label.config(
-            text=f"{self.warning_cell_voltage/10}")
+        self.warning_cell_voltage_label.config(text=f"{self.warning_cell_voltage/10}")
         self.write_warning_cell_voltage(int(float(value)))
 
     def on_osd_checkoutbutton_changed(self):
@@ -281,18 +283,13 @@ class frame_monitor:
         self.warning_cell_voltage_scale.set(self.warning_cell_voltage_default)
         self.osd_var.set(True)
 
-        self.brightness_label.config(
-            text=f"{int(float(self.brightness_default))}")
-        self.contrast_label.config(
-            text=f"{int(float(self.contrast_default))}")
-        self.saturation_label.config(
-            text=f"{int(float(self.saturation_default))}")
-        self.backlight_label.config(
-            text=f"{int(float(self.backlight_default))}")
+        self.brightness_label.config(text=f"{int(float(self.brightness_default))}")
+        self.contrast_label.config(text=f"{int(float(self.contrast_default))}")
+        self.saturation_label.config(text=f"{int(float(self.saturation_default))}")
+        self.backlight_label.config(text=f"{int(float(self.backlight_default))}")
 
         self.on_cell_count_scale_changed(self.cell_count_default)
-        self.on_warning_cell_voltage_scale_changed(
-            self.warning_cell_voltage_default)
+        self.on_warning_cell_voltage_scale_changed(self.warning_cell_voltage_default)
         self.osd_var.set(True)
         self.on_osd_checkoutbutton_changed()
 
@@ -302,8 +299,14 @@ class frame_monitor:
         label = ttk.Label(self._frame, text="Brightness")
         label.grid(row=row, column=0, sticky="w", padx=20)
 
-        self.brightness_scale = ttk.Scale(self._frame, from_=self.brightness_min, to=self.brightness_max, orient="horizontal",
-                                          length=350, command=self.on_brightness_scale_changed)
+        self.brightness_scale = ttk.Scale(
+            self._frame,
+            from_=self.brightness_min,
+            to=self.brightness_max,
+            orient="horizontal",
+            length=350,
+            command=self.on_brightness_scale_changed,
+        )
         self.brightness_scale.grid(row=row, column=1, sticky="w", padx=20)
 
         self.brightness_label = ttk.Label(self._frame, text="0")
@@ -314,8 +317,14 @@ class frame_monitor:
         label = ttk.Label(self._frame, text="Contrast")
         label.grid(row=row, column=0, sticky="w", padx=20)
 
-        self.contrast_scale = ttk.Scale(self._frame, from_=self.contrast_min, to=self.contrast_max, orient="horizontal",
-                                        length=350, command=self.on_contrast_scale_changed)
+        self.contrast_scale = ttk.Scale(
+            self._frame,
+            from_=self.contrast_min,
+            to=self.contrast_max,
+            orient="horizontal",
+            length=350,
+            command=self.on_contrast_scale_changed,
+        )
         self.contrast_scale.grid(row=row, column=1, sticky="w", padx=20)
 
         self.contrast_label = ttk.Label(self._frame, text="0")
@@ -326,8 +335,14 @@ class frame_monitor:
         label = ttk.Label(self._frame, text="Saturation")
         label.grid(row=row, column=0, sticky="w", padx=20)
 
-        self.saturation_scale = ttk.Scale(self._frame, from_=self.saturation_min, to=self.saturation_max, orient="horizontal",
-                                          length=350, command=self.on_saturation_scale_changed)
+        self.saturation_scale = ttk.Scale(
+            self._frame,
+            from_=self.saturation_min,
+            to=self.saturation_max,
+            orient="horizontal",
+            length=350,
+            command=self.on_saturation_scale_changed,
+        )
         self.saturation_scale.grid(row=row, column=1, sticky="w", padx=20)
 
         self.saturation_label = ttk.Label(self._frame, text="0")
@@ -338,8 +353,14 @@ class frame_monitor:
         label = ttk.Label(self._frame, text="Backlight")
         label.grid(row=row, column=0, sticky="w", padx=20)
 
-        self.backlight_scale = ttk.Scale(self._frame, from_=self.backlight_min, to=self.backlight_max, orient="horizontal",
-                                         length=350, command=self.on_backlight_scale_changed)
+        self.backlight_scale = ttk.Scale(
+            self._frame,
+            from_=self.backlight_min,
+            to=self.backlight_max,
+            orient="horizontal",
+            length=350,
+            command=self.on_backlight_scale_changed,
+        )
         self.backlight_scale.grid(row=row, column=1, sticky="w", padx=20)
 
         self.backlight_label = ttk.Label(self._frame, text="0")
@@ -350,8 +371,14 @@ class frame_monitor:
         label = ttk.Label(self._frame, text="Cell Count")
         label.grid(row=row, column=0, sticky="w", padx=20)
 
-        self.cell_count_scale = ttk.Scale(self._frame, from_=self.cell_count_min, to=self.cell_count_max, orient="horizontal",
-                                          length=350, command=self.on_cell_count_scale_changed)
+        self.cell_count_scale = ttk.Scale(
+            self._frame,
+            from_=self.cell_count_min,
+            to=self.cell_count_max,
+            orient="horizontal",
+            length=350,
+            command=self.on_cell_count_scale_changed,
+        )
         self.cell_count_scale.grid(row=row, column=1, sticky="w", padx=20)
 
         self.cell_count_label = ttk.Label(self._frame, text="Auto")
@@ -361,14 +388,18 @@ class frame_monitor:
         label = ttk.Label(self._frame, text="Warning Cell Voltage")
         label.grid(row=row, column=0, sticky="w", padx=20)
 
-        self.warning_cell_voltage_scale = ttk.Scale(self._frame, from_=self.warning_cell_voltage_min, to=self.warning_cell_voltage_max,
-                                                    orient="horizontal", length=350, command=self.on_warning_cell_voltage_scale_changed)
-        self.warning_cell_voltage_scale.grid(
-            row=row, column=1, sticky="w", padx=20)
+        self.warning_cell_voltage_scale = ttk.Scale(
+            self._frame,
+            from_=self.warning_cell_voltage_min,
+            to=self.warning_cell_voltage_max,
+            orient="horizontal",
+            length=350,
+            command=self.on_warning_cell_voltage_scale_changed,
+        )
+        self.warning_cell_voltage_scale.grid(row=row, column=1, sticky="w", padx=20)
 
         self.warning_cell_voltage_label = ttk.Label(self._frame, text="2.8")
-        self.warning_cell_voltage_label.grid(
-            row=row, column=2, sticky="w", padx=10)
+        self.warning_cell_voltage_label.grid(row=row, column=2, sticky="w", padx=10)
 
     def init_osd_setting(self):
         row = 6
@@ -377,12 +408,17 @@ class frame_monitor:
         label.grid(row=row, column=0, sticky="w", padx=20)
 
         self.osd_checkbutton = ttk.Checkbutton(
-            self._frame, variable=self.osd_var, text="", command=self.on_osd_checkoutbutton_changed)
+            self._frame,
+            variable=self.osd_var,
+            text="",
+            command=self.on_osd_checkoutbutton_changed,
+        )
         self.osd_checkbutton.grid(row=row, column=0, sticky="w", padx=100)
 
     def init_reset_button(self):
         row = 6
 
         self.reset_button = tk.Button(
-            self._frame, text="Reset settings", command=self.on_reset_button_press)
+            self._frame, text="Reset settings", command=self.on_reset_button_press
+        )
         self.reset_button.grid(row=row, column=1, sticky="w", padx=100)

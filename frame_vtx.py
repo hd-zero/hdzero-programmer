@@ -5,7 +5,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class frame_vtx():
+
+class frame_vtx:
     def __init__(self, parent):
         self._parent = parent
         self._frame = tk.Frame(parent)
@@ -29,10 +30,19 @@ class frame_vtx():
         for i in range(0, self.target_num):
             # self.image.append(Image.open(f"{i}.png"))
             self.tk_image.append(ImageTk.PhotoImage(vtx_image[i]))
-            self.radio_button.append(ttk.Radiobutton(self._frame, image=self.tk_image[i],
-                                                     variable=self.vtx_target, value=targets[i], compound="left", command=callback))
+            self.radio_button.append(
+                ttk.Radiobutton(
+                    self._frame,
+                    image=self.tk_image[i],
+                    variable=self.vtx_target,
+                    value=targets[i],
+                    compound="left",
+                    command=callback,
+                )
+            )
             self.radio_button[i].grid(
-                row=(int)(i % 4), column=(int)(i/4), padx=5, pady=5)
+                row=(int)(i % 4), column=(int)(i / 4), padx=5, pady=5
+            )
         self.radio_button_reset()
 
     def radio_button_disable(self):

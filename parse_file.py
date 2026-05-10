@@ -4,6 +4,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class parse:
     def __init__(self):
         self.vtx_releases_path = "resource/vtx_releases"
@@ -29,10 +30,10 @@ class parse:
                         words = lines[i].split()
                         for j in range(len(words)):
                             if words[j] == "defined":
-                                name = words[j+1].lower()
+                                name = words[j + 1].lower()
                             if words[j] == "VTX_ID":
-                                if words[j+1] != "0x00":
-                                    word = words[j+1].strip("0x")
+                                if words[j + 1] != "0x00":
+                                    word = words[j + 1].strip("0x")
                                     self.vtx_info[name] = {"id": int(word, 16)}
                     if lines[i] == "/* define VTX ID start */\n":
                         start = 1
@@ -51,19 +52,18 @@ class parse:
             for i in range(len(data)):
                 link_list = []
                 name_list = []
-                for j in range(len(data[i]['assets'])):
-                    link_list.append(data[i]['assets'][j]
-                                     ['browser_download_url'])
+                for j in range(len(data[i]["assets"])):
+                    link_list.append(data[i]["assets"][j]["browser_download_url"])
 
-                    name_start = link_list[j].rfind('/') + len('/')
+                    name_start = link_list[j].rfind("/") + len("/")
                     name_end = link_list[j].index(".zip", name_start)
                     name_list.append(link_list[j][name_start:name_end])
                     name = link_list[j][name_start:name_end]
                     if name == "hdzero_freestyle":
                         name = "hdzero_freestyle_v1"
 
-                    version = data[i]['tag_name']
-                    url = data[i]['assets'][j]['browser_download_url']
+                    version = data[i]["tag_name"]
+                    url = data[i]["assets"][j]["browser_download_url"]
                     self.vtx_info[name][version] = url
             return 1
         except Exception as e:
@@ -77,12 +77,11 @@ class parse:
 
             for i in range(len(data)):
                 link_list = []
-                for j in range(len(data[i]['assets'])):
-                    link_list.append(data[i]['assets'][j]
-                                     ['browser_download_url'])
+                for j in range(len(data[i]["assets"])):
+                    link_list.append(data[i]["assets"][j]["browser_download_url"])
 
-                    version = data[i]['tag_name']
-                    url = data[i]['assets'][j]['browser_download_url']
+                    version = data[i]["tag_name"]
+                    url = data[i]["assets"][j]["browser_download_url"]
                     self.event_vrx_info[version] = url
             return 1
         except Exception as e:
@@ -96,12 +95,11 @@ class parse:
 
             for i in range(len(data)):
                 link_list = []
-                for j in range(len(data[i]['assets'])):
-                    link_list.append(data[i]['assets'][j]
-                                     ['browser_download_url'])
+                for j in range(len(data[i]["assets"])):
+                    link_list.append(data[i]["assets"][j]["browser_download_url"])
 
-                    version = data[i]['tag_name']
-                    url = data[i]['assets'][j]['browser_download_url']
+                    version = data[i]["tag_name"]
+                    url = data[i]["assets"][j]["browser_download_url"]
                     self.monitor_info[version] = url
             return 1
         except Exception as e:
@@ -118,7 +116,8 @@ class parse:
         for i in range(0, num):
             try:
                 self.vtx_target_image.append(
-                    ori_img.crop((0, i*100, 299, i*100+99)))
+                    ori_img.crop((0, i * 100, 299, i * 100 + 99))
+                )
             except Exception as e:
                 logger.error(f"Error cropping target image: {e}")
                 return 0
@@ -132,12 +131,11 @@ class parse:
 
             for i in range(len(data)):
                 link_list = []
-                for j in range(len(data[i]['assets'])):
-                    link_list.append(data[i]['assets'][j]
-                                     ['browser_download_url'])
+                for j in range(len(data[i]["assets"])):
+                    link_list.append(data[i]["assets"][j]["browser_download_url"])
 
-                    version = data[i]['tag_name']
-                    url = data[i]['assets'][j]['browser_download_url']
+                    version = data[i]["tag_name"]
+                    url = data[i]["assets"][j]["browser_download_url"]
                     self.radio_info[version] = url
             return 1
         except Exception as e:
